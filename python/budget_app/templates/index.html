@@ -1,0 +1,109 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="dashboard-header">
+        <div class="retro-card summary-card">
+            <h2>Monthly Summary</h2>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <span class="label">Income</span>
+                    <span class="value">${{ "%.2f"|format(total_income) }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Budgeted</span>
+                    <span class="value">${{ "%.2f"|format(total_budget) }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Spent</span>
+                    <span class="value">${{ "%.2f"|format(total_spent) }}</span>
+                </div>
+                <div class="summary-item remaining">
+                    <span class="label">Remaining</span>
+                    <span class="value">${{ "%.2f"|format(remaining) }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="retro-card budget-card">
+            <h2>Budget vs. Spending</h2>
+            <table class="retro-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Budget</th>
+                        <th>Spent</th>
+                        <th>Remaining</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category in budget['categories'] %}
+                    {% set spent = spending.get(category['name'], 0) %}
+                    {% set remaining = category['amount'] - spent %}
+                    <tr>
+                        <td>{{ category['name'] }}</td>
+                        <td>${{ "%.2f"|format(category['amount']) }}</td>
+                        <td>${{ "%.2f"|format(spent) }}</td>
+                        <td class="{% if remaining < 0 %}negative{% endif %}">${{ "%.2f"|format(remaining) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="retro-card goals-card">
+            <h2>Savings Goals</h2>
+            {% if goals %}
+            <div class="goals-grid">
+                {% for goal in goals %}
+                {% set percentage = (goal['current'] / goal['target'] * 100) if goal['target'] > 0 else 0 %}
+                <div class="goal-item">
+                    <h3>{{ goal['name'] }}</h3>
+                    <div class="goal-progress">
+                        <div class="progress-bar">
+                            <div class="progress" style="width: {{ percentage }}%"></div>
+                        </div>
+                        <div class="progress-text">
+                            ${{ "%.2f"|format(goal['current']) }} / ${{ "%.2f"|format(goal['target']) }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="empty-state">No savings goals yet. <a href="{{ url_for('manage_goals') }}">Add one!</a></p>
+            {% endif %}
+        </div>
+
+        <div class="retro-card transactions-card">
+            <h2>Recent Transactions</h2>
+            {% if transactions %}
+            <table class="retro-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions %}
+                    <tr class="{% if transaction['type'] == 'income' %}income{% else %}expense{% endif %}">
+                        <td>{{ transaction['date'] }}</td>
+                        <td>{{ transaction['description'] }}</td>
+                        <td>{{ transaction['category'] }}</td>
+                        <td>${{ "%.2f"|format(transaction['amount']) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="empty-state">No transactions yet. <a href="{{ url_for('add_transaction') }}">Add one!</a></p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,517 @@
+/* Retro Budget App Styles */
+:root {
+    --primary-color: #2e86de;
+    --secondary-color: #ff9f43;
+    --gold-color: #ffd700;
+    --dark-color: #1e272e;
+    --light-color: #f5f6fa;
+    --success-color: #44bd32;
+    --danger-color: #e84118;
+    --border-color: #a4b0be;
+    --card-bg: #f1f2f6;
+    --retro-shadow: 4px 4px 0px rgba(0, 0, 0, 0.8);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'VT323', monospace;
+    background-color: var(--light-color);
+    color: var(--dark-color);
+    font-size: 18px;
+    line-height: 1.6;
+    background-image: linear-gradient(45deg, rgba(46, 134, 222, 0.05) 25%, transparent 25%),
+                      linear-gradient(-45deg, rgba(46, 134, 222, 0.05) 25%, transparent 25%),
+                      linear-gradient(45deg, transparent 75%, rgba(46, 134, 222, 0.05) 75%),
+                      linear-gradient(-45deg, transparent 75%, rgba(46, 134, 222, 0.05) 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header Styles */
+header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.title {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 2.5rem;
+    color: var(--dark-color);
+    text-align: center;
+    margin: 20px 0;
+    text-shadow: 4px 4px 0 var(--gold-color);
+    letter-spacing: 2px;
+}
+
+.gold-coin {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    animation: spin 3s infinite linear;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    background-color: var(--primary-color);
+    border: 3px solid var(--dark-color);
+    box-shadow: var(--retro-shadow);
+}
+
+nav ul li {
+    padding: 0;
+    border-right: 3px solid var(--dark-color);
+}
+
+nav ul li:last-child {
+    border-right: none;
+}
+
+nav ul li a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+nav ul li a:hover {
+    background-color: var(--dark-color);
+    color: var(--gold-color);
+}
+
+/* Page Header */
+.page-header {
+    margin-bottom: 20px;
+}
+
+.page-header h2 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.8rem;
+    border-bottom: 3px solid var(--gold-color);
+    padding-bottom: 10px;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Card Styles */
+.retro-card {
+    background-color: var(--card-bg);
+    border: 3px solid var(--dark-color);
+    border-radius: 4px;
+    box-shadow: var(--retro-shadow);
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.retro-card h2, .retro-card h3 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--gold-color);
+    padding-bottom: 10px;
+    color: var(--dark-color);
+}
+
+.retro-card h3 {
+    font-size: 1.2rem;
+}
+
+/* Dashboard Styles */
+.dashboard-header {
+    margin-bottom: 30px;
+}
+
+.summary-card {
+    background-color: white;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    background-color: var(--primary-color);
+    color: white;
+    border: 2px solid var(--dark-color);
+    border-radius: 4px;
+}
+
+.summary-item.remaining {
+    background-color: var(--gold-color);
+    color: var(--dark-color);
+}
+
+.summary-item .label {
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+
+.summary-item .value {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.dashboard-grid .retro-card:first-child {
+    grid-column: 1 / 3;
+}
+
+/* Table Styles */
+.retro-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.retro-table th {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px;
+    text-align: left;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.9rem;
+}
+
+.retro-table td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.retro-table tr.income {
+    background-color: rgba(68, 189, 50, 0.1);
+}
+
+.retro-table tr.expense {
+    background-color: rgba(232, 65, 24, 0.1);
+}
+
+.retro-table tr:hover {
+    background-color: rgba(46, 134, 222, 0.1);
+}
+
+.retro-table .negative {
+    color: var(--danger-color);
+}
+
+.retro-table .total-row {
+    font-weight: bold;
+    background-color: var(--light-color);
+}
+
+/* Form Styles */
+.form-section {
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select {
+    width: 100%;
+    padding: 12px;
+    border: 3px solid var(--dark-color);
+    border-radius: 4px;
+    font-family: 'VT323', monospace;
+    font-size: 1.2rem;
+    background-color: white;
+}
+
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+
+.input-with-icon {
+    position: relative;
+}
+
+.dollar-sign {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--dark-color);
+}
+
+.input-with-icon input {
+    padding-left: 30px;
+}
+
+.retro-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: 3px solid var(--dark-color);
+    padding: 10px 20px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 var(--dark-color);
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.retro-button:hover {
+    background-color: var(--gold-color);
+    color: var(--dark-color);
+}
+
+.retro-button:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 var(--dark-color);
+}
+
+.form-actions {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Categories List */
+.categories-list, .goals-list {
+    display: grid;
+    gap: 20px;
+}
+
+.category-item, .goal-item-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 15px;
+    background-color: white;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.goal-item-form {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.current-progress {
+    padding-top: 32px;
+}
+
+.progress-display {
+    background-color: var(--light-color);
+    padding: 12px;
+    border: 3px solid var(--dark-color);
+    border-radius: 4px;
+    text-align: center;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+/* Radio Button Styling */
+.retro-radio-group {
+    display: flex;
+    gap: 20px;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+}
+
+.radio-option input[type="radio"] {
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+}
+
+/* Goals Styling */
+.goals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.goal-item {
+    padding: 15px;
+    background-color: white;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.goal-item h3 {
+    border-bottom: 2px solid var(--gold-color);
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    font-family: 'VT323', monospace;
+    font-size: 1.5rem;
+}
+
+.goal-progress {
+    margin-top: 10px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 25px;
+    background-color: var(--light-color);
+    border: 2px solid var(--dark-color);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.progress {
+    height: 100%;
+    background-color: var(--gold-color);
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+    background-size: 20px 20px;
+    animation: progress-animation 2s linear infinite;
+}
+
+@keyframes progress-animation {
+    0% { background-position: 0 0; }
+    100% { background-position: 20px 0; }
+}
+
+.progress-text {
+    text-align: center;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* Alert Styles */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 3px solid var(--dark-color);
+    border-radius: 4px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: var(--retro-shadow);
+}
+
+.alert-success {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.alert-danger {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+}
+
+/* Month Selector */
+.month-selector {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.retro-select {
+    padding: 10px;
+    border: 3px solid var(--dark-color);
+    border-radius: 4px;
+    font-family: 'VT323', monospace;
+    font-size: 1.2rem;
+    background-color: white;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 50px;
+    padding: 20px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
+    color: var(--dark-color);
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .dashboard-grid .retro-card:first-child {
+        grid-column: 1;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .category-item, .goal-item-form {
+        grid-template-columns: 1fr;
+    }
+    
+    nav ul {
+        flex-direction: column;
+    }
+    
+    nav ul li {
+        border-right: none;
+        border-bottom: 3px solid var(--dark-color);
+    }
+    
+    nav ul li:last-child {
+        border-bottom: none;
+    }
+}

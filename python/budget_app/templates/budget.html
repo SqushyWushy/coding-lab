@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Edit Budget</h2>
+</div>
+
+<div class="retro-card budget-form-card">
+    <form method="POST" action="{{ url_for('edit_budget') }}">
+        <div class="form-section">
+            <h3>Monthly Income</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="income_partner1">Partner 1 Income</label>
+                    <div class="input-with-icon">
+                        <span class="dollar-sign">$</span>
+                        <input type="number" id="income_partner1" name="income_partner1" step="0.01" value="{{ budget['income']['Partner 1'] }}" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="income_partner2">Partner 2 Income</label>
+                    <div class="input-with-icon">
+                        <span class="dollar-sign">$</span>
+                        <input type="number" id="income_partner2" name="income_partner2" step="0.01" value="{{ budget['income']['Partner 2'] }}" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Budget Categories</h3>
+            <div class="categories-list">
+                {% for category in budget['categories'] %}
+                <div class="category-item">
+                    <div class="form-group">
+                        <label for="category_name_{{ loop.index0 }}">Category Name</label>
+                        <input type="text" id="category_name_{{ loop.index0 }}" name="category_name_{{ loop.index0 }}" value="{{ category['name'] }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category_amount_{{ loop.index0 }}">Monthly Amount</label>
+                        <div class="input-with-icon">
+                            <span class="dollar-sign">$</span>
+                            <input type="number" id="category_amount_{{ loop.index0 }}" name="category_amount_{{ loop.index0 }}" step="0.01" value="{{ category['amount'] }}" required>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Add New Category</h3>
+            <div class="category-item">
+                <div class="form-group">
+                    <label for="new_category_name">Category Name</label>
+                    <input type="text" id="new_category_name" name="new_category_name">
+                </div>
+                <div class="form-group">
+                    <label for="new_category_amount">Monthly Amount</label>
+                    <div class="input-with-icon">
+                        <span class="dollar-sign">$</span>
+                        <input type="number" id="new_category_amount" name="new_category_amount" step="0.01" value="0">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="retro-button">Save Budget</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

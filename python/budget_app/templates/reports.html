@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Reports</h2>
+</div>
+
+<div class="retro-card reports-card">
+    <div class="report-section">
+        <h3>Monthly Spending by Category</h3>
+        {% if months %}
+        <div class="month-selector">
+            <label for="month-select">Select Month:</label>
+            <select id="month-select" class="retro-select">
+                {% for month in months %}
+                <option value="{{ month }}">{{ month }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="monthly-reports">
+            {% for month in months %}
+            <div class="month-report" id="month-{{ month }}" style="display: {% if loop.first %}block{% else %}none{% endif %};">
+                <h4>{{ month }}</h4>
+                <table class="retro-table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category in categories %}
+                        <tr>
+                            <td>{{ category }}</td>
+                            <td>${{ "%.2f"|format(monthly_spending[month][category]) }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="total-row">
+                            <td>Total</td>
+                            <td>${{ "%.2f"|format(monthly_spending[month].values()|sum) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-state">No spending data yet. <a href="{{ url_for('add_transaction') }}">Add a transaction!</a></p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.getElementById('month-select').addEventListener('change', function() {
+        const selectedMonth = this.value;
+        const monthReports = document.querySelectorAll('.month-report');
+        
+        monthReports.forEach(report => {
+            report.style.display = 'none';
+        });
+        
+        document.getElementById('month-' + selectedMonth).style.display = 'block';
+    });
+</script>
+{% endblock %}

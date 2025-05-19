@@ -1,0 +1,6 @@
+# This file ensures the sounds directory is included in git repositories.
+# Add sound files here to enhance the game experience:
+# - click.wav: Block selection sound
+# - match.wav: Sound when blocks are matched and removed
+# - levelup.wav: Sound when advancing to the next level
+# - gameover.wav: Sound when the game ends

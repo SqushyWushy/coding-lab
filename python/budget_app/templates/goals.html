@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Savings Goals</h2>
+</div>
+
+<div class="retro-card goals-form-card">
+    <form method="POST" action="{{ url_for('manage_goals') }}">
+        <div class="form-section">
+            <h3>Current Goals</h3>
+            {% if goals %}
+            <div class="goals-list">
+                {% for goal in goals %}
+                <div class="goal-item-form">
+                    <div class="form-group">
+                        <label for="goal_name_{{ loop.index0 }}">Goal Name</label>
+                        <input type="text" id="goal_name_{{ loop.index0 }}" name="goal_name_{{ loop.index0 }}" value="{{ goal['name'] }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="goal_target_{{ loop.index0 }}">Target Amount</label>
+                        <div class="input-with-icon">
+                            <span class="dollar-sign">$</span>
+                            <input type="number" id="goal_target_{{ loop.index0 }}" name="goal_target_{{ loop.index0 }}" step="0.01" value="{{ goal['target'] }}" required>
+                        </div>
+                    </div>
+                    <div class="current-progress">
+                        <label>Current Progress</label>
+                        <div class="progress-display">
+                            ${{ "%.2f"|format(goal['current']) }} / ${{ "%.2f"|format(goal['target']) }}
+                            {% if goal['target'] > 0 %}
+                            ({{ "%.1f"|format(goal['current'] / goal['target'] * 100) }}%)
+                            {% else %}
+                            (0%)
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="empty-state">No savings goals yet. Add one below!</p>
+            {% endif %}
+        </div>
+
+        <div class="form-section">
+            <h3>Add New Goal</h3>
+            <div class="goal-item-form">
+                <div class="form-group">
+                    <label for="new_goal_name">Goal Name</label>
+                    <input type="text" id="new_goal_name" name="new_goal_name" placeholder="Summer Camp">
+                </div>
+                <div class="form-group">
+                    <label for="new_goal_target">Target Amount</label>
+                    <div class="input-with-icon">
+                        <span class="dollar-sign">$</span>
+                        <input type="number" id="new_goal_target" name="new_goal_target" step="0.01" value="0">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="retro-button">Save Goals</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
