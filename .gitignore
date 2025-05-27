@@ -3,3 +3,13 @@ assembly/math-match-game/
 java/JavaProjects/DerivativeCalculator/
 java/JavaProjects/OOProject/
 libcs50/
+# Ignore compiled C programs
+CS50x/week1/cash
+CS50x/week1/hello
+CS50x/week1/mario
+
+# Ignore all files in CS50x that don't have a dot (no extension = likely binary)
+CS50x/**/[^.]*
+
+# EXCEPTION: keep folders (optional, Git ignores them unless they're tracked anyway)
+!*/
