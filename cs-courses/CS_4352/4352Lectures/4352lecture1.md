@@ -273,22 +273,33 @@ Designing and implementing Human-Computer Interfaces (HCI) is inherently difficu
 
 1. Knowing Users Is Hard
    • Users often don’t know what they want.
+
    • Designers can’t unlearn their own knowledge (“curse of expertise”).
+
    • Systems serve diverse user types, so one-size-fits-all doesn’t work.
 
 2. Tasks Are Inherently Complex
    • Modern software (e.g., MS Word, AutoCAD) has hundreds of features.
+
    • Even helpful metaphors (like “desktop”) can create new confusion.
 
 3. Many Competing Requirements
    • UI design must juggle:
+
    • Standards
+
    • Graphic design
+
    • Documentation
+
    • Performance
+
    • Internationalization
+
    • Social/political context
+
    • Legal concerns
+
    • Time & cost constraints
 
 4. No Silver Bullet
