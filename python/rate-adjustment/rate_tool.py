@@ -7,99 +7,99 @@ from dateutil import rrule
 # Predefined rate presets for different states
 state_presets = {
     'Texas': {
-        'Enrichment': {
+        'Standard': {  # 2x/week, higher rates
             'Elementary': {7: 419, 9: 409, 12: 389, 18: 369, 24: 349},
             'Middle':     {7: 439, 9: 429, 12: 409, 18: 389, 24: 369},
             'High':       {7: 499, 9: 489, 12: 469, 18: 449, 24: 429},
         },
-        'Standard': {
+        'Enrichment': {  # 1x/week, lower rates
             'Elementary': {7: 249, 9: 239, 12: 229, 18: 219, 24: 209},
             'Middle':     {7: 259, 9: 249, 12: 239, 18: 229, 24: 219},
             'High':       {7: 279, 9: 269, 12: 259, 18: 249, 24: 239},
         }
     },
     'Ohio': {
-        'Enrichment': {
+        'Standard': {  # 2x/week, higher rates
             'Elementary': {3: 379, 7: 359, 9: 339, 12: 319, 18: 299, 24: 279},
             'Middle':     {3: 399, 7: 379, 9: 359, 12: 339, 18: 319, 24: 299},
             'High':       {3: 439, 7: 419, 9: 399, 12: 379, 18: 359, 24: 339},
         },
-        'Standard': {
+        'Enrichment': {  # 1x/week, lower rates
             'Elementary': {3: 219, 7: 209, 9: 199, 12: 189, 18: 179, 24: 169},
             'Middle':     {3: 229, 7: 219, 9: 209, 12: 199, 18: 189, 24: 179},
             'High':       {3: 249, 7: 239, 9: 229, 12: 219, 18: 209, 24: 199},
         }
     },
     '4SRanch': {
-        'Enrichment': {
-            'Elementary': {7: 269, 9: 259, 12: 249, 18: 239, 24: 229},
-            'Middle':     {7: 279, 9: 269, 12: 259, 18: 249, 24: 239},
-            'High':       {7: 299, 9: 289, 12: 279, 18: 269, 24: 259},
-        },
-        'Standard': {
+        'Standard': {  # 2x/week, higher rates
             'Elementary': {7: 439, 9: 429, 12: 419, 18: 399, 24: 379},
             'Middle':     {7: 459, 9: 449, 12: 439, 18: 419, 24: 399},
             'High':       {7: 519, 9: 499, 12: 489, 18: 469, 24: 449},
+        },
+        'Enrichment': {  # 1x/week, lower rates
+            'Elementary': {7: 269, 9: 259, 12: 249, 18: 239, 24: 229},
+            'Middle':     {7: 279, 9: 269, 12: 259, 18: 249, 24: 239},
+            'High':       {7: 299, 9: 289, 12: 279, 18: 269, 24: 259},
         }
     },
     'La Jolla and La Costa': {
-        'Enrichment': {
-            'Elementary': {7: 269, 9: 259, 12: 249, 18: 239, 24: 229},
-            'Middle':     {7: 279, 9: 269, 12: 259, 18: 249, 24: 239},
-            'High':       {7: 299, 9: 289, 12: 279, 18: 269, 24: 259},
-        },
-        'Standard': {
+        'Standard': {  # 2x/week, higher rates
             'Elementary': {7: 439, 9: 429, 12: 419, 18: 399, 24: 379},
             'Middle':     {7: 459, 9: 449, 12: 439, 18: 419, 24: 399},
             'High':       {7: 519, 9: 499, 12: 489, 18: 469, 24: 449},
+        },
+        'Enrichment': {  # 1x/week, lower rates
+            'Elementary': {7: 269, 9: 259, 12: 249, 18: 239, 24: 229},
+            'Middle':     {7: 279, 9: 269, 12: 259, 18: 249, 24: 239},
+            'High':       {7: 299, 9: 289, 12: 279, 18: 269, 24: 259},
         }
     },
     'Cherry Creek, Cherry Hills, and Parker': {
-        'Enrichment': {
-            'Elementary': {7: 239, 9: 229, 12: 219, 18: 209, 24: 199},
-            'Middle':     {7: 249, 9: 239, 12: 229, 18: 219, 24: 209},
-            'High':       {7: 269, 9: 259, 12: 249, 18: 239, 24: 229},
-        },
-        'Standard': {
+        'Standard': {  # 2x/week, higher rates
             'Elementary': {7: 389, 9: 379, 12: 369, 18: 349, 24: 329},
             'Middle':     {7: 409, 9: 399, 12: 389, 18: 369, 24: 349},
             'High':       {7: 439, 9: 429, 12: 419, 18: 399, 24: 379},
-        }
-    },
-    'LA, LI, and SW': {
-        'Enrichment': {
+        },
+        'Enrichment': {  # 1x/week, lower rates
             'Elementary': {7: 239, 9: 229, 12: 219, 18: 209, 24: 199},
             'Middle':     {7: 249, 9: 239, 12: 229, 18: 219, 24: 209},
             'High':       {7: 269, 9: 259, 12: 249, 18: 239, 24: 229},
-        },
-        'Standard': {
+        }
+    },
+    'Lakewood, Littleton, and South Westminster': {
+        'Standard': {  # 2x/week, higher rates
             'Elementary': {7: 399, 9: 389, 12: 369, 18: 349, 24: 329},
             'Middle':     {7: 419, 9: 409, 12: 389, 18: 369, 24: 349},
             'High':       {7: 479, 9: 469, 12: 449, 18: 429, 24: 409},
+        },
+        'Enrichment': {  # 1x/week, lower rates
+            'Elementary': {7: 239, 9: 229, 12: 219, 18: 209, 24: 199},
+            'Middle':     {7: 249, 9: 239, 12: 229, 18: 219, 24: 209},
+            'High':       {7: 269, 9: 259, 12: 249, 18: 239, 24: 229},
         }
     },
     'Queen Creek': {
-        'Enrichment': {
-            'Elementary': {7: 219, 9: 209, 12: 199, 18: 189, 24: 179},
-            'Middle':     {7: 229, 9: 219, 12: 209, 18: 199, 24: 189},
-            'High':       {7: 249, 9: 239, 12: 229, 18: 219, 24: 209},
-        },
-        'Standard': {
+        'Standard': {  # 2x/week, higher rates
             'Elementary': {7: 359, 9: 349, 12: 339, 18: 319, 24: 299},
             'Middle':     {7: 379, 9: 369, 12: 359, 18: 339, 24: 319},
             'High':       {7: 439, 9: 419, 12: 399, 18: 379, 24: 359},
+        },
+        'Enrichment': {  # 1x/week, lower rates
+            'Elementary': {7: 219, 9: 209, 12: 199, 18: 189, 24: 179},
+            'Middle':     {7: 229, 9: 219, 12: 209, 18: 199, 24: 189},
+            'High':       {7: 249, 9: 239, 12: 229, 18: 219, 24: 209},
         }
     },
     'Litchfield Park': {
-        'Enrichment': {
-            'Elementary': {7: 229, 9: 219, 12: 209, 18: 199, 24: 189},
-            'Middle':     {7: 239, 9: 229, 12: 219, 18: 209, 24: 199},
-            'High':       {7: 259, 9: 249, 12: 239, 18: 229, 24: 219},
-        },
-        'Standard': {
+        'Standard': {  # 2x/week, higher rates
             'Elementary': {7: 379, 9: 369, 12: 349, 18: 329, 24: 309},
             'Middle':     {7: 399, 9: 389, 12: 369, 18: 349, 24: 329},
             'High':       {7: 459, 9: 439, 12: 419, 18: 399, 24: 379},
+        },
+        'Enrichment': {  # 1x/week, lower rates
+            'Elementary': {7: 229, 9: 219, 12: 209, 18: 199, 24: 189},
+            'Middle':     {7: 239, 9: 229, 12: 219, 18: 209, 24: 199},
+            'High':       {7: 259, 9: 249, 12: 239, 18: 229, 24: 219},
         }
     },
     # Add more states as needed
@@ -136,7 +136,7 @@ def calculate_months(start_date, end_date):
         start_month = (start_date + relativedelta(months=1)).replace(day=1)
     # End on last day of month
     end_month = end_date.replace(day=1) + relativedelta(months=1) - relativedelta(days=1)
-    months = rrule.rrule(rrule.MONTHLY, dtstart=start_month, until=end_month).count()
+    months = rrule.rrule(rrule.MONTHLY, dtstart=start_month, until=end_month).count() or 1  # Ensure int, default to 1 if None
     return max(1, months)
 
 def generate_email(student, parent_name, months, adjusted_term,
@@ -147,13 +147,15 @@ def generate_email(student, parent_name, months, adjusted_term,
     diff = abs(diff)
     discount_label = f"{student['discount_value']:.2f}%" if student['discount_is_percent'] else f"${student['discount_value']:.2f}"
     discount_line = f"We’ve fully applied your original discount of <b>{discount_label}</b> to ensure you receive the same great value." if student['discount_value'] > 0 else ""
+    original_rate_text = f"${original_rate:.2f} (with discount)" if student['discount_value'] > 0 else f"${original_rate:.2f}"
+    adjusted_rate_text = f"${adjusted_rate:.2f} (with discount)" if student['discount_value'] > 0 else f"${adjusted_rate:.2f}"
     subject_line = f"Membership Rate Update for {student['name']}"
 
     return f"""
 <html>
 <body style="font-family: 'Poppins', sans-serif; line-height: 1.6; color: #1d1d1f;">
 <h4 style="color: #ed1c24; font-weight: 600; margin-bottom: 10px;">Subject: {subject_line}</h4>
-<p>Dear {parent_name},</p>
+<p>Hi {parent_name},</p>
 <br>
 
 <p>Thank you for being such a valued part of our Mathnasium family! We’re committed to supporting {student['name']}'s learning journey. I’m reaching out to share a clear and friendly update about {student['name']}'s membership rate, adjusted to reflect their enrollment timeline, as part of our commitment to equitable pricing.</p>
@@ -180,13 +182,13 @@ def generate_email(student, parent_name, months, adjusted_term,
 
 <p><b>Original Membership</b></p>
 <ul style="list-style-type: disc; padding-left: 20px;">
-    <li>Monthly Rate: <b>${base_original:.2f} → ${original_rate:.2f} (with discount)</b></li>
+    <li>Monthly Rate: <b>${base_original:.2f} → {original_rate_text}</b></li>
     <li>Total Paid: <b>${total_paid:.2f}</b></li>
 </ul>
 
 <p><b>Adjusted Membership</b></p>
 <ul style="list-style-type: disc; padding-left: 20px;">
-    <li>Monthly Rate: <b>${base_adjusted:.2f} → ${adjusted_rate:.2f} (with discount)</b></li>
+    <li>Monthly Rate: <b>${base_adjusted:.2f} → {adjusted_rate_text}</b></li>
     <li>Adjusted Total: <b>${adjusted_total:.2f}</b></li>
 </ul>
 
@@ -201,8 +203,7 @@ def generate_email(student, parent_name, months, adjusted_term,
 
 <br>
 <p>Warmest regards,<br>
-<b>Your Center Director</b><br>
-Mathnasium</p>
+
 
 </body>
 </html>
@@ -307,12 +308,12 @@ st.markdown(
         font-size: 0.9em;
     }
     .price-banner {
-        background-color: rgba(255, 215, 0, 0.1);
-        border: 1px solid rgba(255, 215, 0, 0.3);
+        background-color: rgba(255, 64, 64, 0.1); /* Subtle red background */
+        border: 1px solid rgba(255, 64, 64, 0.3);
         border-radius: 12px;
         padding: 15px;
         margin-bottom: 30px;
-        box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        box-shadow: 0 0 10px rgba(255, 64, 64, 0.3);
         position: relative;
         overflow: hidden;
     }
@@ -320,11 +321,18 @@ st.markdown(
         content: '';
         position: absolute;
         top: -5px; right: -5px; bottom: -5px; left: -5px;
-        background: linear-gradient(45deg, #ffd700, #ffea00, #ffd700);
+        background: linear-gradient(45deg, #ff4040, #ff1a1a, #ff4040); /* Red glow */
         z-index: -1;
         filter: blur(10px);
         opacity: 0.4;
         border-radius: 12px;
+    }
+    .stExpander label p {
+        color: #1d1d1f !important; /* Keeping header text black for contrast with red */
+        font-weight: 600;
+    }
+    .stExpander > div > div > div {
+        background-color: rgba(255, 64, 64, 0.05); /* Very subtle red background */
     }
     </style>
     """,
@@ -345,7 +353,7 @@ if 'rates' not in st.session_state or st.session_state.get('last_state') != sele
     st.session_state.last_state = selected_state
     st.rerun()
 
-# Clickable dropdown for price adjustment at the top with subtle glowing yellow banner
+# Clickable dropdown for price adjustment at the top with red glow
 with st.expander("Adjust Prices (for different states/centers)"):
     st.markdown('<div class="price-banner">', unsafe_allow_html=True)
     st.header("Customize Rates")
@@ -357,12 +365,12 @@ with st.expander("Adjust Prices (for different states/centers)"):
 
     st.subheader("Standard Rates")
     data_standard = {term: [st.session_state.rates['Standard'][grade][term] for grade in grades] for term in terms}
-    df_standard = pd.DataFrame(data_standard, index=grades)
+    df_standard = pd.DataFrame(data_standard, index=pd.Index(grades))
     edited_standard = st.data_editor(df_standard, use_container_width=True)
 
     st.subheader("Enrichment Rates")
     data_enrichment = {term: [st.session_state.rates['Enrichment'][grade][term] for grade in grades] for term in terms}
-    df_enrichment = pd.DataFrame(data_enrichment, index=grades)
+    df_enrichment = pd.DataFrame(data_enrichment, index=pd.Index(grades))
     edited_enrichment = st.data_editor(df_enrichment, use_container_width=True)
 
     # Button to update rates
