@@ -411,7 +411,7 @@ for i in range(num_students):
         col3, col4 = st.columns([1,1], gap="medium")
 
         with col3:
-            discount_type = st.radio("Discount Type", options=['%', '$'], horizontal=True, key=f"discount_type_{i}", help="Percentage or fixed dollar amount.")
+            discount_type = st.radio("Discount Type", options=['%', '$'], index=1, horizontal=True, key=f"discount_type_{i}", help="Percentage or fixed dollar amount.")
 
         with col4:
             discount_value = st.number_input("Discount Amount", min_value=0.0, step=0.01, key=f"discount_value_{i}", help="Value of the discount.")
