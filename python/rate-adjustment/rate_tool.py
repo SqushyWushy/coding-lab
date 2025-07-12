@@ -66,7 +66,7 @@ state_presets = {
             'High':       {7: 269, 9: 259, 12: 249, 18: 239, 24: 229},
         }
     },
-    'LALISW': {
+    'Lakewood, Littleton, and South Westminster': {
         'Standard': {  # 2x/week, higher rates
             'Elementary': {7: 399, 9: 389, 12: 369, 18: 349, 24: 329},
             'Middle':     {7: 419, 9: 409, 12: 389, 18: 369, 24: 349},
@@ -153,7 +153,7 @@ def generate_email(student, parent_name, months, adjusted_term,
 <html>
 <body style="font-family: 'Poppins', sans-serif; line-height: 1.6; color: #1d1d1f;">
 <h4 style="color: #ed1c24; font-weight: 600; margin-bottom: 10px;">Subject: {subject_line}</h4>
-<p>Dear {parent_name},</p>
+<p>Hi {parent_name},</p>
 <br>
 
 <p>Thank you for being such a valued part of our Mathnasium family! We’re committed to supporting {student['name']}'s learning journey. I’m reaching out to share a clear and friendly update about {student['name']}'s membership rate, adjusted to reflect their enrollment timeline, as part of our commitment to equitable pricing.</p>
@@ -201,8 +201,7 @@ def generate_email(student, parent_name, months, adjusted_term,
 
 <br>
 <p>Warmest regards,<br>
-<b>Your Center Director</b><br>
-Mathnasium</p>
+
 
 </body>
 </html>
