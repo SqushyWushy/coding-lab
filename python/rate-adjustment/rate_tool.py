@@ -87,12 +87,10 @@ def generate_email(student, parent_name, months, adjusted_term,
 <h4 style="color: #1d1d1f;">What’s Next?</h4>
 <p>This rate adjustment reflects our standard process to align the monthly rate with the actual time {student['name']} has been enrolled, ensuring fairness for every family. We’re here to make this as smooth as possible for you, so if you have any questions or need further clarification, please don’t hesitate to reach out—I’d be delighted to assist!</p>
 
-<p>We’re so grateful to have {student['name']} and your family with us at Mathnasium of Richardson West. Thank you for trusting us with their math journey!</p>
+<p>We’re so grateful to have {student['name']} and your family with us at Mathnasium! Thank you for trusting us with their math journey!</p>
 
 <br>
 <p>Warmest regards,<br>
-<b>Your Center Director</b><br>
-Mathnasium of Richardson West</p>
 
 </body>
 </html>
