@@ -113,20 +113,15 @@ if 'rates' not in st.session_state:
 def get_base_rate(grade, plan_type, term):
     return st.session_state.rates[plan_type][grade][term]
 
-def determine_nearest_plan(months):
+def determine_nearest_plan(months, original_term):
     plans = [7, 9, 12, 18, 24]
-    for p in plans:
-        if months == p:
-            return p
-    for i in range(len(plans) - 1):
-        p = plans[i]
-        next_p = plans[i + 1]
-        threshold = p + (next_p - p) * 0.9
-        if months >= threshold:
-            return next_p
-        else:
-            return p
-    return plans[-1]
+    # Find the highest term where 90% is met
+    for term in reversed(plans):
+        if months >= term * 0.9:
+            return term
+    # Fallback to closest term if no 90% met
+    closest_term = min(plans, key=lambda x: abs(x - months))
+    return closest_term
 
 def apply_discount(rate, value, is_percent):
     return rate * (1 - value / 100) if is_percent else rate - value
@@ -139,7 +134,7 @@ def calculate_months(start_date, end_date):
         start_month = (start_date + relativedelta(months=1)).replace(day=1)
     # End on last day of month
     end_month = end_date.replace(day=1) + relativedelta(months=1) - relativedelta(days=1)
-    months = rrule.rrule(rrule.MONTHLY, dtstart=start_month, until=end_month).count() or 1  # Ensure int, default to 1 if None
+    months = rrule.rrule(rrule.MONTHLY, dtstart=start_month, until=end_month).count() or 1
     return max(1, months)
 
 def generate_email(student, parent_name, months, adjusted_term,
@@ -291,7 +286,7 @@ st.markdown(
         padding: 30px;
         border-radius: 18px;
         margin-top: 20px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        box-shadow: 0 0 12px rgba(0,0,0,0.05);
     }
     .stCaption {
         color: #6e6e73;
@@ -434,7 +429,7 @@ for i in range(num_students):
             }
 
             months = calculate_months(start, end)
-            adjusted_term = determine_nearest_plan(months)
+            adjusted_term = determine_nearest_plan(months, term)  # Pass original term
 
             base_original = get_base_rate(grade, plan, term)
             base_adjusted = get_base_rate(grade, plan, adjusted_term)
