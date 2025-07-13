@@ -220,6 +220,19 @@ st.markdown(
         margin: 0 auto;
         padding: 40px 20px;
     }
+    .stApp [data-baseweb="theme"] {
+        --swui-gray-50: #f9f9f9; /* Force light background */
+        --swui-gray-100: #f0f0f0;
+        --swui-gray-200: #e0e0e0;
+        --swui-gray-300: #d0d0d0;
+        --swui-gray-400: #c0c0c0;
+        --swui-gray-500: #a0a0a0;
+        --swui-gray-600: #808080;
+        --swui-gray-700: #606060;
+        --swui-gray-800: #404040;
+        --swui-gray-900: #202020;
+        --swui-text-color: #1d1d1f; /* Force light text */
+    }
     .stHeader {
         font-size: 2.5em;
         font-weight: 600;
