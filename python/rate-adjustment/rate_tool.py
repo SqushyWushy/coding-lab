@@ -4,6 +4,20 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from dateutil import rrule
 
+# Initialize session state for theme
+if 'theme' not in st.session_state:
+    st.session_state.theme = 'light'
+
+# Toggle theme function
+def toggle_theme():
+    st.session_state.theme = 'dark' if st.session_state.theme == 'light' else 'light'
+
+# Set page config
+st.set_page_config(page_title="Mathnasium Rate Adjustment Tool", page_icon="📬", layout="wide")
+
+# Theme toggle button
+st.button("Toggle Theme", on_click=toggle_theme)
+
 # Predefined rate presets for different states
 state_presets = {
     'Texas': {
@@ -211,141 +225,136 @@ def generate_email(student, parent_name, months, adjusted_term,
 st.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
-    .stApp {
-        background-color: #ffffff;
-        color: #1d1d1f;
-        font-family: 'Poppins', sans-serif;
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 40px 20px;
-    }
-    .stApp [data-baseweb="theme"] {
-        --swui-gray-50: #f9f9f9; /* Force light background */
-        --swui-gray-100: #f0f0f0;
-        --swui-gray-200: #e0e0e0;
-        --swui-gray-300: #d0d0d0;
-        --swui-gray-400: #c0c0c0;
-        --swui-gray-500: #a0a0a0;
-        --swui-gray-600: #808080;
-        --swui-gray-700: #606060;
-        --swui-gray-800: #404040;
-        --swui-gray-900: #202020;
-        --swui-text-color: #1d1d1f; /* Force light text */
-    }
-    .stHeader {
-        font-size: 2.5em;
-        font-weight: 600;
-        color: #ed1c24;
-        text-align: center;
-        margin-bottom: 40px;
-    }
-    .instructions {
-        font-size: 1.1em;
-        color: #6e6e73;
-        text-align: center;
-        margin-bottom: 40px;
-    }
-    .student-section {
-        background-color: #f8f9fa;
-        padding: 30px;
-        border-radius: 18px;
-        margin-bottom: 30px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-    .student-title {
-        font-size: 1.8em;
-        font-weight: 600;
-        color: #1d1d1f;
-        margin-bottom: 25px;
-        text-align: center;
-    }
-    .stButton > button {
-        background-color: #ed1c24;
-        color: white;
-        border-radius: 12px;
-        padding: 12px;
-        border: none;
-        font-size: 1em;
-        font-weight: 600;
-        transition: background-color 0.3s ease, transform 0.1s ease;
-        width: 100%;
-    }
-    .stButton > button:hover {
-        background-color: #d4181f;
-        transform: translateY(-1px);
-    }
-    .stTextInput > div > div > input, .stSelectbox > div > div > div > button, .stDateInput > div > div > input, .stNumberInput > div > div > input {
-        border-radius: 8px;
-        border: 1px solid #d2d2d7;
-        padding: 10px;
-        font-size: 1em;
-        transition: border-color 0.3s ease;
-    }
-    .stTextInput > div > div > input:focus, .stSelectbox > div > div > div > button:focus, .stDateInput > div > div > input:focus, .stNumberInput > div > div > input:focus {
-        border-color: #ed1c24;
-        box-shadow: 0 0 0 2px rgba(237, 28, 36, 0.2);
-    }
-    .stRadio > div {
-        display: flex;
-        justify-content: flex-start;
-    }
-    .stRadio > div > label {
-        margin-right: 20px;
-    }
-    .email-output {
-        background-color: #ffffff;
-        padding: 30px;
-        border-radius: 18px;
-        margin-top: 20px;
-        box-shadow: 0 0 12px rgba(0,0,0,0.05);
-    }
-    .stCaption {
-        color: #6e6e73;
-        font-size: 0.9em;
-        text-align: center;
-        margin-top: 10px;
-    }
-    /* Add some white space and visual hierarchy */
-    [data-testid="column"] {
-        padding: 0 10px;
-    }
-    /* Tooltips for help */
-    .stTooltip {
-        background-color: #ffd700;
-        color: #1d1d1f;
-        border-radius: 8px;
-        padding: 8px 12px;
-        font-size: 0.9em;
-    }
-    .price-banner {
-        background-color: rgba(255, 64, 64, 0.1); /* Subtle red background */
-        border: 1px solid rgba(255, 64, 64, 0.3);
-        border-radius: 12px;
-        padding: 15px;
-        margin-bottom: 30px;
-        box-shadow: 0 0 10px rgba(255, 64, 64, 0.3);
-        position: relative;
-        overflow: hidden;
-    }
-    .price-banner::before {
-        content: '';
-        position: absolute;
-        top: -5px; right: -5px; bottom: -5px; left: -5px;
-        background: linear-gradient(45deg, #ff4040, #ff1a1a, #ff4040); /* Red glow */
-        z-index: -1;
-        filter: blur(10px);
-        opacity: 0.4;
-        border-radius: 12px;
-    }
-    .stExpander label p {
-        color: #1d1d1f !important; /* Keeping header text black for contrast with red */
-        font-weight: 600;
-    }
-    .stExpander > div > div > div {
-        background-color: rgba(255, 64, 64, 0.05); /* Very subtle red background */
-    }
-    </style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+        .stApp {
+            background-color: """ + ('#ffffff' if st.session_state.theme == 'light' else '#1e1e1e') + """;
+            color: """ + ('#1d1d1f' if st.session_state.theme == 'light' else '#e0e0e0') + """;
+            font-family: 'Poppins', sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            transition: all 0.3s ease;
+        }
+        .stHeader {
+            font-size: 2.5em;
+            font-weight: 600;
+            color: #ed1c24;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .instructions {
+            font-size: 1.1em;
+            color: """ + ('#606060' if st.session_state.theme == 'light' else '#a0a0a0') + """;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .student-section {
+            background-color: """ + ('#f8f9fa' if st.session_state.theme == 'light' else '#2e2e2e') + """;
+            padding: 30px;
+            border-radius: 18px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .student-title {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: """ + ('#1d1d1f' if st.session_state.theme == 'light' else '#e0e0e0') + """;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .stButton > button {
+            background-color: #ed1c24;
+            color: white;
+            border-radius: 12px;
+            padding: 12px;
+            border: none;
+            font-size: 1em;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            width: 100%;
+        }
+        .stButton > button:hover {
+            background-color: #d4181f;
+            transform: translateY(-1px);
+        }
+        .stTextInput > div > div > input, .stSelectbox > div > div > div > button, .stDateInput > div > div > input, .stNumberInput > div > div > input {
+            border-radius: 8px;
+            border: 1px solid """ + ('#d0d0d0' if st.session_state.theme == 'light' else '#404040') + """;
+            padding: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+            background-color: """ + ('#ffffff' if st.session_state.theme == 'light' else '#2e2e2e') + """;
+            color: """ + ('#1d1d1f' if st.session_state.theme == 'light' else '#e0e0e0') + """;
+        }
+        .stTextInput > div > div > input:focus, .stSelectbox > div > div > div > button:focus, .stDateInput > div > div > input:focus, .stNumberInput > div > div > input:focus {
+            border-color: #ed1c24;
+            box-shadow: 0 0 0 2px rgba(237, 28, 36, 0.2);
+        }
+        .stRadio > div {
+            display: flex;
+            justify-content: flex-start;
+        }
+        .stRadio > div > label {
+            margin-right: 20px;
+            color: """ + ('#1d1d1f' if st.session_state.theme == 'light' else '#e0e0e0') + """;
+        }
+        .stRadio input[type="radio"] + span::before {
+            content: attr(data-label);
+            color: """ + ('#1d1d1f' if st.session_state.theme == 'light' else '#e0e0e0') + """;
+            font-weight: bold;
+        }
+        .email-output {
+            background-color: """ + ('#f8f9fa' if st.session_state.theme == 'light' else '#2e2e2e') + """;
+            padding: 30px;
+            border-radius: 18px;
+            margin-top: 20px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.05);
+            color: """ + ('#1d1d1f' if st.session_state.theme == 'light' else '#e0e0e0') + """;
+        }
+        .stCaption {
+            color: """ + ('#606060' if st.session_state.theme == 'light' else '#a0a0a0') + """;
+            font-size: 0.9em;
+            text-align: center;
+            margin-top: 10px;
+        }
+        [data-testid="column"] {
+            padding: 0 10px;
+        }
+        .stTooltip {
+            background-color: #ffd700;
+            color: #1d1d1f;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.9em;
+        }
+        .price-banner {
+            background-color: rgba(255, 64, 64, 0.1);
+            border: 1px solid rgba(255, 64, 64, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 10px rgba(255, 64, 64, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .price-banner::before {
+            content: '';
+            position: absolute;
+            top: -5px; right: -5px; bottom: -5px; left: -5px;
+            background: linear-gradient(45deg, #ff4040, #ff1a1a, #ff4040);
+            z-index: -1;
+            filter: blur(10px);
+            opacity: 0.4;
+            border-radius: 12px;
+        }
+        .stExpander label p {
+            color: """ + ('#1d1d1f' if st.session_state.theme == 'light' else '#e0e0e0') + """ !important;
+            font-weight: 600;
+        }
+        .stExpander > div > div > div {
+            background-color: rgba(255, 64, 64, 0.05);
+        }
+        </style>
     """,
     unsafe_allow_html=True
 )
