@@ -29,15 +29,23 @@ def calculate_session_duration(row):
 
 # Calculate time difference in minutes
 def calculate_time_difference(scheduled_time, actual_time):
+    if pd.isna(scheduled_time) or pd.isna(actual_time):
+        return None
     try:
         return (actual_time - scheduled_time).total_seconds() / 60
     except:
         return None
 
-# Style function for highlighting low performers in red
-def highlight_low_performers(val, low_performers):
-    color = 'red' if val in low_performers else 'black'
-    return f'color: {color}'
+# Style function for highlighting based on assessment
+def highlight_low_performers(val, df):
+    if pd.isna(val) or not isinstance(val, str):
+        return ''
+    # Find the row for the student name in the DataFrame
+    matching_row = df[df['student name'] == val]
+    if not matching_row.empty:
+        assessment = matching_row['had_assessment'].iloc[0]
+        return 'color: red' if assessment != '' else 'color: black'
+    return 'color: black'  # Default to black if no match
 
 st.set_page_config(page_title="Student Learning Center Dashboard", layout="wide")
 st.title("Student Learning Center Dashboard")
@@ -66,7 +74,8 @@ if excel_file is not None and csv_file is not None:
             df_checkin = pd.concat([df_checkin.drop(col, axis=1), parsed_df], axis=1)
 
     if 'assessment' in df_checkin.columns:
-        df_checkin['had_assessment'] = df_checkin['assessment'].str.contains('Progress Check|assessment', case=False, na=False).map({True: 'Yes', False: 'No'})
+        # Set had_assessment to the assessment value if not empty/NA, otherwise empty string
+        df_checkin['had_assessment'] = df_checkin['assessment'].apply(lambda x: x if pd.notna(x) and x != '' else '')
 
     if 'pages completed' in df_checkin.columns:
         df_checkin['pages completed'] = pd.to_numeric(df_checkin['pages completed'], errors='coerce')
@@ -74,7 +83,7 @@ if excel_file is not None and csv_file is not None:
 
     df_checkin['date'] = pd.to_datetime(df_checkin['date'], errors='coerce').dt.date
 
-    # Create full datetime for actual check-in time
+    # Create full datetime for actual check-in time with flexible parsing
     if 'session start' in df_checkin.columns:
         df_checkin['actual_time'] = pd.to_datetime(df_checkin['date'].astype(str) + ' ' + df_checkin['session start'], errors='coerce')
 
@@ -107,10 +116,8 @@ if excel_file is not None and csv_file is not None:
 
     # Calculate time difference
     if 'actual_time' in df_merged.columns and 'scheduled_time' in df_merged.columns:
-        df_merged['time_difference'] = df_merged.apply(lambda row: calculate_time_difference(row['scheduled_time'], row['actual_time']), axis=1)
-        df_merged['Early/Late Status'] = 'On Time'
-        df_merged.loc[df_merged['time_difference'] > 15, 'Early/Late Status'] = 'Late'
-        df_merged.loc[df_merged['time_difference'] < -15, 'Early/Late Status'] = 'Early'
+        df_merged['time_difference'] = df_merged.apply(lambda row: calculate_time_difference(row['scheduled_time'], row['actual_time']) if pd.notna(row['scheduled_time']) and pd.notna(row['actual_time']) else None, axis=1)
+        df_merged['Early/Late Status'] = df_merged['time_difference'].apply(lambda x: 'On Time' if pd.isna(x) else ('Late' if x > 15 else ('Early' if x < -15 else 'On Time')))
 
     # Format times for display
     if 'scheduled_time' in df_merged.columns:
@@ -122,8 +129,8 @@ if excel_file is not None and csv_file is not None:
 
     # Identify low performers (less than 5 pages, no assessment)
     low_performers = []
-    if 'pages completed' in df_checkin.columns and 'had_assessment' in df_checkin.columns:
-        low_performers = df_checkin[(df_checkin['pages completed'] < 5) & (df_checkin['had_assessment'] == 'No')]['student name'].unique()
+    if 'had_assessment' in df_checkin.columns and 'pages completed' in df_checkin.columns:
+        low_performers = df_checkin[(df_checkin['pages completed'] < 5) & (df_checkin['had_assessment'] == '')]['student name'].unique()
 
     # Tabs
     tab1, tab2, tab3, tab4 = st.tabs(["Attendance Overview", "Student Performance", "Instructor Performance", "Center Stats Overview"])
@@ -137,15 +144,15 @@ if excel_file is not None and csv_file is not None:
         walk_ins.columns = ['Walk-In Students', 'Check-In Time']
         st.write("Walk-In Students")
         if len(walk_ins) > 0:
-            styled_walk_ins = walk_ins.style.map(highlight_low_performers, subset=['Walk-In Students'], low_performers=low_performers)
-            st.dataframe(styled_walk_ins)
+            styled_walk_ins = walk_ins.style.apply(lambda x: [highlight_low_performers(val, df_checkin) for val in x], axis=1, subset=['Walk-In Students'])
+            st.dataframe(styled_walk_ins, hide_index=True)
         else:
             st.write("No walk-ins today.")
 
         no_shows = df_merged[df_merged['No-Show']][['student name', 'Scheduled Time']]
         st.write("No-Show Students")
         if len(no_shows) > 0:
-            st.dataframe(no_shows)
+            st.dataframe(no_shows.style.apply(lambda x: [highlight_low_performers(val, df_checkin) for val in x], axis=1, subset=['student name']), hide_index=True)
         else:
             st.write("No no-shows today.")
 
@@ -153,16 +160,16 @@ if excel_file is not None and csv_file is not None:
         if 'time_difference' in df_merged.columns:
             time_comparison = df_merged[df_merged['Attended']][['student name', 'Scheduled Time', 'Check-In Time', 'Time Difference (Minutes)', 'Early/Late Status']]
             time_comparison = time_comparison.sort_values(by='Time Difference (Minutes)', ascending=True)
-            styled_time = time_comparison.style.map(highlight_low_performers, subset=['student name'], low_performers=low_performers)
-            st.dataframe(styled_time)
+            styled_time = time_comparison.style.apply(lambda x: [highlight_low_performers(val, df_checkin) for val in x], axis=1, subset=['student name'])
+            st.dataframe(styled_time, hide_index=True)
         else:
             st.write("Unable to calculate time differences - missing actual or scheduled times.")
 
         super_late_early = time_comparison[time_comparison['Early/Late Status'] != 'On Time'] if 'Early/Late Status' in time_comparison.columns else pd.DataFrame()
         st.write("Students Super Late or Super Early (15+ Minutes Off)")
         if len(super_late_early) > 0:
-            styled_super = super_late_early.style.map(highlight_low_performers, subset=['student name'], low_performers=low_performers)
-            st.dataframe(styled_super)
+            styled_super = super_late_early.style.apply(lambda x: [highlight_low_performers(val, df_checkin) for val in x], axis=1, subset=['student name'])
+            st.dataframe(styled_super, hide_index=True)
         else:
             st.write("No students were super late or early today.")
 
@@ -179,15 +186,15 @@ if excel_file is not None and csv_file is not None:
 
             st.write("Students with Less Than 5 Pages")
             low_pages_display = low_pages_students[['student name', 'pages completed', 'had_assessment']]
-            low_pages_display.columns = ['Student Name', 'Pages Completed', 'Had Progress Check/Assessment']
-            styled_low = low_pages_display.style.map(highlight_low_performers, subset=['Student Name'], low_performers=low_performers)
-            st.dataframe(styled_low)
+            low_pages_display.columns = ['Student Name', 'Pages Completed', 'Assessment Details']
+            styled_low = low_pages_display.style.apply(lambda x: [highlight_low_performers(val, df_checkin) for val in x], axis=1, subset=['Student Name'])
+            st.dataframe(styled_low, hide_index=True)
 
             st.write("All Students' Pages Completed")
-            individual_pages = df_checkin[['student name', 'pages completed']].sort_values('pages completed', ascending=False)
-            individual_pages.columns = ['Student Name', 'Pages Completed']
-            styled_individual = individual_pages.style.map(highlight_low_performers, subset=['Student Name'], low_performers=low_performers)
-            st.dataframe(styled_individual)
+            individual_pages = df_checkin[['student name', 'pages completed', 'had_assessment']]
+            individual_pages.columns = ['Student Name', 'Pages Completed', 'Assessment Details']
+            styled_individual = individual_pages.style.apply(lambda x: [highlight_low_performers(val, df_checkin) for val in x], axis=1, subset=['Student Name'])
+            st.dataframe(styled_individual, hide_index=True)
 
     with tab3:
         st.subheader("Instructor Performance")
@@ -203,30 +210,32 @@ if excel_file is not None and csv_file is not None:
                 Average_Pages=('pages completed', 'mean')
             ).reset_index()
 
+            instructor_stats.columns = ['Instructor', 'Students Worked With', 'Total Pages', 'Average Pages']
+
             # Vectorized calculation for % Less Than 5 Pages
             less_than_5 = df_instr[df_instr['pages completed'] < 5].groupby('instructors_list').size()
             total_students = df_instr.groupby('instructors_list').size()
-            instructor_stats['% Less Than 5 Pages'] = (less_than_5 / total_students * 100).fillna(0).reindex(instructor_stats['instructors_list']).values
+            instructor_stats['% Students < 5 Pages'] = (less_than_5 / total_students * 100).fillna(0).reindex(instructor_stats['Instructor']).values
 
             st.write("Instructor Summary")
-            st.dataframe(instructor_stats.style.format("{:.2f}", subset=['Average_Pages', '% Less Than 5 Pages']))
+            st.dataframe(instructor_stats.style.format("{:.2f}", subset=['Average Pages', '% Students < 5 Pages']))
 
             for instructor in instructors:
-                st.markdown(f"### Details for {instructor}")
-                instr_students = df_instr[df_instr['instructors_list'] == instructor].copy()
-                avg_pages = instr_students['pages completed'].mean()
-                st.metric("Average Pages Completed by Students", f"{avg_pages:.2f}")
+                with st.expander(f"Details for {instructor}", expanded=False):
+                    instr_students = df_instr[df_instr['instructors_list'] == instructor].copy()
+                    avg_pages = instr_students['pages completed'].mean()
+                    st.metric("Average Pages Completed by Students", f"{avg_pages:.2f}")
 
-                low_pages = instr_students[instr_students['pages completed'] < 5]
-                num_low = len(low_pages)
-                percent_low = (num_low / len(instr_students) * 100) if len(instr_students) > 0 else 0
-                st.metric("% of Students with Less Than 5 Pages", f"{percent_low:.2f}%")
+                    low_pages = instr_students[instr_students['pages completed'] < 5]
+                    num_low = len(low_pages)
+                    percent_low = (num_low / len(instr_students) * 100) if len(instr_students) > 0 else 0
+                    st.metric("% of Students with Less Than 5 Pages", f"{percent_low:.2f}%")
 
-                st.write("Students with Less Than 5 Pages")
-                low_pages_display = low_pages[['student name', 'pages completed', 'had_assessment']]
-                low_pages_display.columns = ['Student Name', 'Pages Completed', 'Had Progress Check/Assessment']
-                styled_low_instr = low_pages_display.style.map(highlight_low_performers, subset=['Student Name'], low_performers=low_performers)
-                st.dataframe(styled_low_instr)
+                    st.write("Students with Less Than 5 Pages")
+                    low_pages_display = low_pages[['student name', 'pages completed', 'had_assessment']]
+                    low_pages_display.columns = ['Student Name', 'Pages Completed', 'Assessment Details']
+                    styled_low_instr = low_pages_display.style.apply(lambda x: [highlight_low_performers(val, df_checkin) for val in x], axis=1, subset=['Student Name'])
+                    st.dataframe(styled_low_instr, hide_index=True)
 
     with tab4:
         st.subheader("Center Stats Overview")
@@ -267,16 +276,21 @@ if excel_file is not None and csv_file is not None:
         # Time Difference Distribution Bar Chart
         if 'time_difference' in df_merged.columns:
             time_diff_data = df_merged[df_merged['Attended']].copy()
-            time_diff_data['Time Diff Bin'] = pd.cut(time_diff_data['time_difference'], bins=[-float('inf'), -15, -5, 5, 15, float('inf')],
-                                                    labels=['>15 min Early', '5-15 min Early', 'On Time', '5-15 min Late', '>15 min Late'])
-            time_diff_dist = time_diff_data['Time Diff Bin'].value_counts().reset_index()
-            time_diff_dist.columns = ['Time Difference', 'Count']
-            fig_time_diff = px.bar(time_diff_dist, x='Time Difference', y='Count', title='Time Difference Distribution',
-                                  color='Time Difference', color_discrete_map={
-                                      '>15 min Early': '#2ECC71', '5-15 min Early': '#3498DB', 'On Time': '#F1C40F',
-                                      '5-15 min Late': '#E67E22', '>15 min Late': '#E74C3C'}, height=400)
-            fig_time_diff.update_traces(textposition='auto')
-            st.plotly_chart(fig_time_diff, use_container_width=True)
+            # Filter out None values before cutting
+            time_diff_data = time_diff_data[time_diff_data['time_difference'].notna()]
+            if not time_diff_data.empty:
+                time_diff_data['Time Diff Bin'] = pd.cut(time_diff_data['time_difference'], bins=[-float('inf'), -15, -5, 5, 15, float('inf')],
+                                                        labels=['>15 min Early', '5-15 min Early', 'On Time', '5-15 min Late', '>15 min Late'])
+                time_diff_dist = time_diff_data['Time Diff Bin'].value_counts().reset_index()
+                time_diff_dist.columns = ['Time Difference', 'Count']
+                fig_time_diff = px.bar(time_diff_dist, x='Time Difference', y='Count', title='Time Difference Distribution',
+                                      color='Time Difference', color_discrete_map={
+                                          '>15 min Early': '#2ECC71', '5-15 min Early': '#3498DB', 'On Time': '#F1C40F',
+                                          '5-15 min Late': '#E67E22', '>15 min Late': '#E74C3C'}, height=400)
+                fig_time_diff.update_traces(textposition='auto')
+                st.plotly_chart(fig_time_diff, use_container_width=True)
+            else:
+                st.write("No valid time difference data to display.")
 
 else:
     st.info("Please upload both the check-in Excel and scheduled appointments CSV to view insights.")
