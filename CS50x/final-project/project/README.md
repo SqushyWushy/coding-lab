@@ -1,52 +1,91 @@
-# FocusBeast: A Premium CLI Pomodoro Timer
+# FocusBeast
 
 #### Video Demo: https://youtu.be/kOUViIRqdM0
 
-#### Description:
+#### Description: **FocusBeast** is a terminal-based Pomodoro timer designed to help users stay laser-focused and track their productivity over time. Unlike simple timers, FocusBeast offers a premium CLI experience with ASCII art, colored output, session history logging, and sound alerts.
 
-**FocusBeast** is a terminal-based Pomodoro timer designed to help users stay laser-focused and track their productivity over time. Unlike simple timers, FocusBeast offers a premium CLI experience with ASCII art, colored output, session history logging, and sound alerts.
+⸻
 
-Users can choose between two Pomodoro styles:
+Motivation
 
-- **Classic Mode**: 25-minute focus + 5-minute break
-- **Beast Mode**: 50-minute focus + 10-minute break
+I wanted to build something I would genuinely use. I often work from the terminal and wanted a distraction-free timer that looked great, didn’t require a GUI or browser, and could actually track my discipline. Most Pomodoro apps don’t log anything — this one does.
 
-At the start, the app prompts users for their preferred mode and how many rounds they want to complete. For each round, it runs a countdown timer for the focus session and then for the break, playing a sound at the end of each phase. At the end of every focus session, a log entry is saved to a local SQLite database, saving the date, time, duration, and mode.
+This project allowed me to bring together everything I’ve learned in CS50 — Python scripting, database work, file structure, logic, argument parsing, and designing for real users (myself included).
 
-To view progress, users can run the app with a `--stats` flag to display a formatted breakdown of their session history and total focus time — all within the terminal.
+⸻
 
----
+⚙️ How to Run
 
-## 📦 Features
+1. Clone the repo and enter the directory:
 
-- 🧠 Focus and break countdown timers
-- 🎛️ Choice of "Classic" or "Beast" mode
-- 🔁 Support for multiple rounds in one session
-- 🗃️ SQLite-powered session tracking
-- 🎨 Beautiful ASCII + color CLI UI
-- 🔔 Sound notifications when timers end
-- 📊 CLI stats view for daily focus history
+git clone https://github.com/SqushyWushy/coding-lab.git
+cd focusbeast
 
----
+2. Install dependencies:
 
-## Why This Project?
-
-I wanted to build a tool that I would actually use — something fast, clean, and focused. The Pomodoro technique is powerful, but most apps are bloated or browser-based. I wanted something I could run in the terminal that felt satisfying to use and helped me stay accountable with real data.
-
-This project combines many of the concepts I’ve learned in CS50:
-
-- Python scripting and modules
-- SQLite database integration
-- File and module organization
-- CLI programs
-- Argument parsing and flow control
-
----
-
-## 🚀 How to Run
-
-### Install dependencies:
-
-```bash
 pip install -r requirements.txt
-```
+
+3. Run the program:
+
+python focusbeast.py
+
+Or, to view your stats:
+
+python focusbeast.py --stats
+
+⸻
+
+File Overview
+
+File Description
+focusbeast.py Main entry point, handles CLI logic and session flow
+timer.py Countdown logic for focus and break sessions
+utils.py Utility functions like color printing and sound playing
+database.py SQLite setup and logging logic
+history.py Logic for viewing session stats
+schema.sql SQL schema for creating the sessions table
+requirements.txt Dependencies (colorama, etc.)
+sounds/ Sound files for focus/break transitions
+focusbeast.db SQLite database file for session history (auto-generated)
+README.md This file! Describes project purpose and usage
+
+⸻
+
+Features
+
+- CLI countdown timer with ASCII art and colors
+- Select Classic (25/5) or Beast (50/10) mode
+- Sound notifications when sessions complete
+- Tracks session history in SQLite
+- View total focus time and stats with --stats flag
+- Graceful handling of interruptions (e.g. Ctrl+C)
+
+⸻
+
+What I Learned
+
+- This project helped me master:
+- Argument parsing (argparse)
+- So much patience ;)
+- SQLite CRUD operations in Python
+- Structuring multi-file Python projects
+- Building CLI tools with polish
+- Error handling and user experience
+
+⸻
+
+AI and Code Acknowledgments
+
+Parts of this project were inspired by various Pomodoro CLI apps. I used ChatGPT occasionally for troubleshooting bugs and brainstorming CLI design ideas, but all code was written and fully understood by me.
+
+⸻
+
+Next Steps
+
+If I had more time, I’d like to:
+
+- Add a config file to customize session lengths
+- Add weekly/monthly stats view
+- Add terminal notifications on macOS/Linux
+
+⸻
