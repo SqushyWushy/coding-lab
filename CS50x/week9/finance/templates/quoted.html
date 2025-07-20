@@ -1,0 +1,11 @@
+<!-- templates/quoted.html -->
+{% extends "layout.html" %}
+
+{% block title %}
+    Quote
+{% endblock %}
+
+{% block main %}
+    <h3>{{ name }} ({{ symbol }})</h3>
+    <p>Current Price: {{ price | usd }}</p>
+{% endblock %}

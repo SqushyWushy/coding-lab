@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS sessions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    date TEXT NOT NULL,
+    start_time TEXT NOT NULL,
+    end_time TEXT NOT NULL,
+    duration INTEGER NOT NULL,
+    mode TEXT NOT NULL
+);

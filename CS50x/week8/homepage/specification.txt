@@ -1,0 +1,14 @@
+HTML Tags:
+<h1>, <p>, <img>, <a>, <ul>, <li>, <form>, <input>, <button>, <textarea>
+
+CSS Properties:
+background-color, font-family, color, font-size, margin-bottom
+
+CSS Selectors:
+body, #main-title, .intro, img, ul li
+
+JavaScript:
+I used JavaScript to show a pop-up message when a button is clicked.
+
+Bootstrap:
+I used Bootstrap buttons, layout classes (container, mt-5), and form controls.

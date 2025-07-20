@@ -1,0 +1,84 @@
+<!doctype html>
+
+<html lang="en">
+    <head>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap"
+            rel="stylesheet"
+        />
+        <link href="styles.css" rel="stylesheet" />
+        <title>Trivia!</title>
+        <script>
+            // TODO: Add code to check answers to questions
+            document.addEventListener("DOMContentLoaded", function () {
+                // Handle multiple choice
+                let correctButtons = document.querySelectorAll(".correct");
+                let incorrectButtons = document.querySelectorAll(".incorrect");
+
+                correctButtons.forEach((button) => {
+                    button.addEventListener("click", function () {
+                        button.style.backgroundColor = "green";
+                        button.parentElement.querySelector(
+                            ".feedback",
+                        ).innerText = "Correct!";
+                    });
+                });
+
+                incorrectButtons.forEach((button) => {
+                    button.addEventListener("click", function () {
+                        button.style.backgroundColor = "red";
+                        button.parentElement.querySelector(
+                            ".feedback",
+                        ).innerText = "Incorrect";
+                    });
+                });
+
+                // Handle free response
+                document
+                    .querySelector("#check")
+                    .addEventListener("click", function () {
+                        const input = document.querySelector("input");
+                        const answer = input.value.trim().toLowerCase();
+                        const feedback =
+                            input.parentElement.querySelector(".feedback");
+
+                        if (answer === "tokyo") {
+                            input.style.backgroundColor = "green";
+                            feedback.innerText = "Correct!";
+                        } else {
+                            input.style.backgroundColor = "red";
+                            feedback.innerText = "Incorrect";
+                        }
+                    });
+            });
+        </script>
+    </head>
+    <body>
+        <div class="header">
+            <h1>Trivia!</h1>
+        </div>
+
+        <div class="container">
+            <div class="section">
+                <h2>Part 1: Multiple Choice</h2>
+                <hr />
+                <!-- TODO: Add multiple choice question here -->
+                <h3>Which planet is known as the Red Planet?</h3>
+                <button class="incorrect">Earth</button>
+                <button class="correct">Mars</button>
+                <button class="incorrect">Jupiter</button>
+                <p class="feedback"></p>
+            </div>
+
+            <div class="section">
+                <h2>Part 2: Free Response</h2>
+                <hr />
+                <!-- TODO: Add free response question here -->
+                <h3>What is the capital of Japan?</h3>
+                <input type="text" />
+                <button id="check">Check Answer</button>
+                <p class="feedback"></p>
+            </div>
+        </div>
+    </body>
+</html>

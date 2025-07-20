@@ -1,0 +1,5 @@
+1. This user’s audio aura is moderately energetic and very danceable, with a balanced emotional tone. Their music taste seems to lean toward rhythm-driven songs, but not necessarily happy or sad — more neutral or chill vibes.
+
+2. This aura might not fully represent the listener because it only includes their 100 most-played songs. That might be skewed by what they listened to during workouts or parties. It doesn’t include songs they play occasionally, or skipped songs, or mood-based playlists that aren’t in the top 100.
+
+3. A better way to calculate their aura would be to look at their full listening history across the year. Spotify could weigh songs by total listening time, factor in songs played during specific moods or times of day, and maybe use genre, lyrics, or playlists to get a more complete picture.
