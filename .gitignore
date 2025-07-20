@@ -7,6 +7,8 @@ libcs50/
 CS50x/week1/cash
 CS50x/week1/hello
 CS50x/week1/mario
+CS50x/week7/movies/movies.db
+
 
 # EXCEPTION: keep folders (optional, Git ignores them unless they're tracked anyway)
 !*/
