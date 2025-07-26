@@ -11,7 +11,13 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://exposed-eyj8j05pv-hector-gonzalezs-projects-69248f08.vercel.app',
+    'https://*.vercel.app'
+  ]
+}));
 app.use(express.json());
 
 // MongoDB connection
