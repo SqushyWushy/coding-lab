@@ -1,0 +1,12 @@
+[build]
+dockerFile = "Dockerfile"
+
+[deploy]
+startCommand = "npm start"
+healthcheckPath = "/"
+healthcheckTimeout = 100
+restartPolicyType = "always"
+
+[environments.production]
+name = "exposed-backend"
+rootDirectory = "hackathons/datahackfest25/exposed/backend" 

@@ -14,6 +14,9 @@ function App() {
                          import.meta.env.VITE_AUTH0_CLIENT_ID && 
                          import.meta.env.VITE_AUTH0_DOMAIN !== "your-domain.auth0.com";
 
+  // For hackathon demo, prioritize demo mode to avoid Auth0 dev key issues
+  const preferDemo = true;
+
   const handleLogin = () => {
     if (auth0Configured) {
       loginWithRedirect();
