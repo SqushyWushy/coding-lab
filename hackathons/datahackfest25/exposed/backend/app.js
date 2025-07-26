@@ -19,6 +19,7 @@ app.use(cors({
     'https://exposed-25k8mjn88-hector-gonzalezs-projects-69248f08.vercel.app',
     'https://exposed-fgx4reivq-hector-gonzalezs-projects-69248f08.vercel.app',
     'https://exposed-9min3t9ix-hector-gonzalezs-projects-69248f08.vercel.app',
+    'https://exposed-di0a5xzwh-hector-gonzalezs-projects-69248f08.vercel.app',
     'https://*.vercel.app',
     'https://coding-lab-production-3953.up.railway.app',
     'https://*.railway.app'
