@@ -12,8 +12,16 @@ const upload = multer({
   },
   fileFilter: (req, file, cb) => {
     // Accept JSON files or files with .json extension
+    // Normalize filename to handle spaces and special characters
+    const normalizedFilename = file.originalname.toLowerCase().trim();
+    
+    // Additional validation for common filename issues
+    if (!file.originalname || file.originalname.length === 0) {
+      return cb(new Error("Invalid filename"), false);
+    }
+    
     if (file.mimetype === "application/json" || 
-        file.originalname.endsWith('.json') ||
+        normalizedFilename.endsWith('.json') ||
         file.mimetype === "text/plain") {
       cb(null, true);
     } else {
@@ -37,15 +45,162 @@ function safeParseDate(dateString) {
   }
 }
 
+// Dynamic format detection for future TikTok export changes
+function detectTikTokFormat(jsonData) {
+  const topLevelKeys = Object.keys(jsonData);
+  console.log('Top-level sections found:', topLevelKeys);
+  
+  // Check for activity sections (current and potential future formats)
+  const activitySections = ['Activity', 'Your Activity', 'User Activity', 'Account Activity'];
+  const detectedActivitySection = activitySections.find(section => jsonData[section]);
+  
+  // Check for comment sections (handle variations)
+  const commentSections = ['Comment', 'Comments', 'User Comments'];
+  const detectedCommentSection = commentSections.find(section => jsonData[section]);
+  
+  const formatInfo = {
+    activitySection: detectedActivitySection,
+    commentSection: detectedCommentSection,
+    isNewFormat: detectedActivitySection === 'Your Activity',
+    unknownFormat: !detectedActivitySection,
+    allSections: topLevelKeys
+  };
+  
+  console.log('Format detection result:', formatInfo);
+  return formatInfo;
+}
+
+// Enhanced data extraction with multiple fallback strategies
+function extractVideoData(activity, formatInfo) {
+  // Possible video history key names (current and future variations)
+  const videoHistoryKeys = [
+    'Video Browsing History',
+    'Watch History', 
+    'Viewing History',
+    'Video Activity',
+    'Content History',
+    'Videos Watched'
+  ];
+  
+  for (const key of videoHistoryKeys) {
+    if (activity[key]?.VideoList?.length > 0) {
+      console.log(`Found video data in: ${key} (${activity[key].VideoList.length} videos)`);
+      return activity[key].VideoList;
+    }
+    // Handle alternative structures
+    if (activity[key] && Array.isArray(activity[key])) {
+      console.log(`Found video data in: ${key} (array format, ${activity[key].length} videos)`);
+      return activity[key];
+    }
+  }
+  
+  console.warn('No video data found in any expected location');
+  return [];
+}
+
+// Enhanced search data extraction
+function extractSearchData(activity, formatInfo) {
+  const searchHistoryKeys = [
+    'Search History',
+    'Searches',
+    'Search Activity', 
+    'Query History',
+    'Search Queries'
+  ];
+  
+  for (const key of searchHistoryKeys) {
+    if (activity[key]?.SearchList?.length > 0) {
+      console.log(`Found search data in: ${key} (${activity[key].SearchList.length} searches)`);
+      return activity[key].SearchList;
+    }
+    // Handle alternative structures
+    if (activity[key] && Array.isArray(activity[key])) {
+      console.log(`Found search data in: ${key} (array format, ${activity[key].length} searches)`);
+      return activity[key];
+    }
+  }
+  
+  console.warn('No search data found in any expected location');
+  return [];
+}
+
+// Enhanced social data extraction
+function extractSocialData(activity, formatInfo) {
+  const followerKeys = ['Follower List', 'Follower', 'Followers', 'Following Me'];
+  const followingKeys = ['Following List', 'Following', 'Following Users', 'Users Following'];
+  
+  let followers = [];
+  let following = [];
+  
+  // Extract followers
+  for (const key of followerKeys) {
+    if (activity[key]?.FansList?.length > 0) {
+      followers = activity[key].FansList;
+      console.log(`Found followers in: ${key} (${followers.length} followers)`);
+      break;
+    }
+    if (activity[key] && Array.isArray(activity[key])) {
+      followers = activity[key];
+      console.log(`Found followers in: ${key} (array format, ${followers.length} followers)`);
+      break;
+    }
+  }
+  
+  // Extract following
+  for (const key of followingKeys) {
+    if (activity[key]?.Following?.length > 0) {
+      following = activity[key].Following;
+      console.log(`Found following in: ${key} (${following.length} following)`);
+      break;
+    }
+    if (activity[key] && Array.isArray(activity[key])) {
+      following = activity[key];
+      console.log(`Found following in: ${key} (array format, ${following.length} following)`);
+      break;
+    }
+  }
+  
+  return { followers, following };
+}
+
 // Parse TikTok data and extract comprehensive insights
 function parseTikTokData(jsonData) {
   try {
-    // Handle both "Activity" and "Your Activity" keys (different TikTok export formats)
-    const activity = jsonData.Activity || jsonData["Your Activity"] || {};
+    // Enhanced format detection
+    const formatInfo = detectTikTokFormat(jsonData);
     
-    // Calculate time spent estimates
-    // Handle both "Video Browsing History" and "Watch History" keys (different TikTok export formats)
-    const videoList = (activity["Video Browsing History"]?.VideoList || activity["Watch History"]?.VideoList) || [];
+    // Handle unknown formats gracefully
+    if (formatInfo.unknownFormat) {
+      console.warn('Unknown TikTok format detected. Attempting best-effort parsing...');
+      console.warn('Available sections:', formatInfo.allSections);
+    }
+    
+    // Get activity section (with fallbacks)
+    const activity = jsonData[formatInfo.activitySection] || 
+                    jsonData.Activity || 
+                    jsonData["Your Activity"] || 
+                    {};
+    
+    if (Object.keys(activity).length === 0) {
+      console.error('No activity data found in any expected location');
+      // Try to find any section that might contain activity data
+      const possibleActivitySections = formatInfo.allSections.filter(key => 
+        key.toLowerCase().includes('activity') || 
+        key.toLowerCase().includes('history') ||
+        key.toLowerCase().includes('data')
+      );
+      console.log('Possible activity sections:', possibleActivitySections);
+    }
+    
+    console.log(`Detected TikTok format: ${formatInfo.isNewFormat ? 'New' : 'Old'} format`);
+    console.log(`Activity section: ${formatInfo.activitySection || 'Not found'}`);
+    console.log(`Activity keys found: ${Object.keys(activity).length}`);
+    
+         // Enhanced data extraction with fallbacks
+     const videoList = extractVideoData(activity, formatInfo);
+     const searchHistory = extractSearchData(activity, formatInfo);
+     const { followers, following } = extractSocialData(activity, formatInfo);
+    
     const avgWatchTime = 30; // seconds per TikTok
     const totalWatchTimeSeconds = videoList.length * avgWatchTime;
     const totalWatchTimeHours = totalWatchTimeSeconds / 3600;
@@ -104,11 +259,9 @@ function parseTikTokData(jsonData) {
     
     const longestStreakEnd = new Date(longestStreakStart);
     longestStreakEnd.setDate(longestStreakEnd.getDate() + longestStreak - 1);
-    
-    // Analyze search patterns
-    // Handle both "Search History" and "Searches" keys (different TikTok export formats)
-    const searchHistory = (activity["Search History"]?.SearchList || activity["Searches"]?.SearchList) || [];
-    const searchTerms = searchHistory.map(search => search.SearchTerm.toLowerCase());
+     
+     // Analyze search patterns (using extracted data)
+     const searchTerms = searchHistory.map(search => search.SearchTerm.toLowerCase());
     const searchFrequency = searchTerms.reduce((acc, term) => {
       acc[term] = (acc[term] || 0) + 1;
       return acc;
@@ -117,9 +270,29 @@ function parseTikTokData(jsonData) {
       .sort((a, b) => b[1] - a[1])
       .slice(0, 10);
     
-    // Analyze comment patterns and personality FIRST (before yearly analysis)
-    const comments = jsonData.Comment?.Comments || {};
-    const commentList = comments.CommentsList || [];
+    // Enhanced comment data extraction
+    let comments = {};
+    let commentList = [];
+    
+    // Try different comment section locations
+    if (formatInfo.commentSection && jsonData[formatInfo.commentSection]) {
+      comments = jsonData[formatInfo.commentSection].Comments || jsonData[formatInfo.commentSection];
+    } else if (jsonData.Comment?.Comments) {
+      comments = jsonData.Comment.Comments;
+    } else if (jsonData.Comments) {
+      comments = jsonData.Comments;
+    }
+    
+    // Handle different comment list structures
+    if (comments.CommentsList) {
+      commentList = comments.CommentsList;
+    } else if (Array.isArray(comments)) {
+      commentList = comments;
+    } else if (comments.comments) {
+      commentList = comments.comments;
+    }
+    
+    console.log(`Comments found: ${commentList.length} comments`);
     const commentCount = commentList.length;
     
     // Extract comment text and dates for personality analysis
@@ -331,13 +504,10 @@ function parseTikTokData(jsonData) {
     }, {});
     const topSounds = Object.entries(soundFrequency)
       .sort((a, b) => b[1] - a[1])
-      .slice(0, 5);
-    
-    // Analyze social behavior
-    // Handle both "Follower List" and "Follower" keys (different TikTok export formats)
-    const followers = (activity["Follower List"]?.FansList || activity["Follower"]?.FansList) || [];
-    const following = (activity["Following List"]?.Following || activity["Following"]?.Following) || [];
-    const likes = activity["Like List"]?.ItemFavoriteList || [];
+           .slice(0, 5);
+     
+     // Analyze social behavior (using extracted data)
+     const likes = activity["Like List"]?.ItemFavoriteList || [];
     const shares = activity["Share History"]?.ShareHistoryList || [];
     
     // Analyze live streaming behavior
@@ -664,13 +834,29 @@ router.post("/", upload.single("tiktokData"), async (req, res) => {
       });
     }
 
+    // Log file info for debugging
+    console.log(`Processing file: ${req.file.originalname} (${req.file.size} bytes)`);
+
     // Parse the uploaded JSON file
     let jsonData;
     try {
       jsonData = JSON.parse(req.file.buffer.toString());
+      console.log('JSON parsed successfully');
+      console.log('Top-level keys:', Object.keys(jsonData));
+      
+      // Check for expected structures
+      const hasOldFormat = !!jsonData.Activity;
+      const hasNewFormat = !!jsonData["Your Activity"];
+      console.log(`Format detection - Old: ${hasOldFormat}, New: ${hasNewFormat}`);
+      
+      if (!hasOldFormat && !hasNewFormat) {
+        console.warn('Warning: No Activity or Your Activity section found');
+      }
+      
     } catch (parseError) {
+      console.error("JSON parsing error:", parseError.message);
       return res.status(400).json({ 
-        error: "Invalid JSON file. Please upload a valid TikTok data export JSON file." 
+        error: `Invalid JSON file: ${parseError.message}. Please upload a valid TikTok data export JSON file.` 
       });
     }
 
