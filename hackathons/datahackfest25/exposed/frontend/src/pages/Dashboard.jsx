@@ -18,6 +18,14 @@ function Dashboard() {
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [loadingStage, setLoadingStage] = useState("");
   const [showDataGuide, setShowDataGuide] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
+
+  // Handle window resize for responsive design
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Configure marked options for better rendering
   useEffect(() => {
@@ -191,17 +199,23 @@ function Dashboard() {
       }}
     >
       {/* Header */}
-      <header style={{ padding: "2rem" }}>
+      <header style={{ padding: windowWidth < 768 ? "1rem" : "2rem" }}>
         <div style={{ maxWidth: "64rem", margin: "0 auto" }}>
           <div
             style={{
               backgroundColor: "white",
-              padding: "1.5rem",
+              padding: windowWidth < 768 ? "1rem" : "1.5rem",
               borderRadius: "1rem",
               boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: "1rem",
+              ...(windowWidth < 640 && {
+                flexDirection: "column",
+                textAlign: "center"
+              })
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
@@ -215,6 +229,7 @@ function Dashboard() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  flexShrink: 0
                 }}
               >
                 <span style={{ color: "white", fontSize: "1.25rem" }}>✨</span>
@@ -237,14 +252,14 @@ function Dashboard() {
                 </p>
               </div>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-              <div style={{ textAlign: "right" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
+              <div style={{ textAlign: "right", minWidth: "120px" }}>
                 <p
                   style={{ fontSize: "0.875rem", color: "#6b7280", margin: 0 }}
                 >
                   Welcome back,
                 </p>
-                <p style={{ fontWeight: "500", color: "#111827", margin: 0 }}>
+                <p style={{ fontWeight: "500", color: "#111827", margin: 0, wordBreak: "break-word" }}>
                   {user?.name || user?.email || "User"}
                 </p>
               </div>
@@ -260,6 +275,7 @@ function Dashboard() {
                   border: "none",
                   cursor: "pointer",
                   transition: "background-color 0.2s",
+                  flexShrink: 0
                 }}
                 onMouseOver={(e) =>
                   (e.target.style.backgroundColor = "#dc2626")
@@ -274,7 +290,11 @@ function Dashboard() {
       </header>
 
       <main
-        style={{ maxWidth: "64rem", margin: "0 auto", padding: "0 2rem 2rem" }}
+        style={{ 
+          maxWidth: "64rem", 
+          margin: "0 auto", 
+          padding: windowWidth < 768 ? "0 1rem 2rem" : "0 2rem 2rem"
+        }}
       >
         {/* Upload Section */}
         {!analysis && (
@@ -359,7 +379,7 @@ function Dashboard() {
                 style={{
                   backgroundColor: "white",
                   borderRadius: "1rem",
-                  padding: "2rem",
+                  padding: windowWidth < 768 ? "1.5rem 1rem" : "2rem",
                   boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
                   marginBottom: "1.5rem",
                 }}
@@ -377,7 +397,7 @@ function Dashboard() {
                     display: "block",
                     cursor: "pointer",
                     textAlign: "center",
-                    padding: "3rem 2rem",
+                    padding: windowWidth < 768 ? "2rem 1rem" : "3rem 2rem",
                     border: `2px dashed ${isDragOver ? "#3b82f6" : file ? "#10b981" : "#d1d5db"}`,
                     borderRadius: "0.75rem",
                     transition: "all 0.2s",
@@ -696,11 +716,12 @@ function Dashboard() {
               <div style={{ textAlign: "center", marginBottom: "2rem" }}>
                 <h2
                   style={{
-                    fontSize: "1.875rem",
+                    fontSize: windowWidth < 768 ? "1.5rem" : "1.875rem",
                     fontWeight: "300",
                     color: "#111827",
                     marginBottom: "0.5rem",
                     letterSpacing: "-0.025em",
+                    lineHeight: "1.2"
                   }}
                 >
                   Your Digital Footprint
@@ -713,8 +734,10 @@ function Dashboard() {
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-                  gap: "1.5rem",
+                  gridTemplateColumns: windowWidth < 640 
+                    ? "1fr" 
+                    : "repeat(auto-fit, minmax(200px, 1fr))",
+                  gap: windowWidth < 768 ? "1rem" : "1.5rem",
                 }}
               >
                 {[
@@ -747,7 +770,7 @@ function Dashboard() {
                     key={index}
                     style={{
                       backgroundColor: "white",
-                      padding: "2rem",
+                      padding: windowWidth < 768 ? "1.5rem 1rem" : "2rem",
                       borderRadius: "1rem",
                       boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
                       textAlign: "center",
@@ -771,10 +794,11 @@ function Dashboard() {
                     </div>
                     <div
                       style={{
-                        fontSize: "2rem",
+                        fontSize: windowWidth < 768 ? "1.5rem" : "2rem",
                         fontWeight: "300",
                         color: "#111827",
                         marginBottom: "0.5rem",
+                        lineHeight: "1.2"
                       }}
                     >
                       {stat.value}
@@ -809,8 +833,12 @@ function Dashboard() {
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-                  gap: "1.5rem",
+                  gridTemplateColumns: windowWidth < 640 
+                    ? "1fr" 
+                    : windowWidth < 1024
+                    ? "repeat(auto-fit, minmax(280px, 1fr))"
+                    : "repeat(auto-fit, minmax(300px, 1fr))",
+                  gap: windowWidth < 768 ? "1rem" : "1.5rem",
                 }}
               >
                 <div

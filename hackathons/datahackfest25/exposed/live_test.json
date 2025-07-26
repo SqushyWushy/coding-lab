@@ -1,0 +1,29 @@
+{
+  "Activity": {
+    "Video Browsing History": {
+      "VideoList": [
+        {"Date": "2024-01-01T12:00:00Z"},
+        {"Date": "2024-01-02T15:30:00Z"},
+        {"Date": "2024-01-03T20:45:00Z"}
+      ]
+    },
+    "Login History": {
+      "LoginHistoryList": [
+        {"Date": "2024-01-01T11:45:00Z"},
+        {"Date": "2024-01-02T14:20:00Z"}
+      ]
+    },
+    "Search History": {
+      "SearchList": [
+        {"SearchTerm": "funny cats", "Date": "2024-01-01T12:15:00Z"}
+      ]
+    }
+  },
+  "Comment": {
+    "Comments": {
+      "CommentsList": [
+        {"comment": "This is amazing!", "date": "2024-01-01T12:30:00Z"}
+      ]
+    }
+  }
+}
