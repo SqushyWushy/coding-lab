@@ -20,123 +20,149 @@ const DataGuide = ({ onClose }) => {
       {
         step: 2,
         title: "Go to Your Profile",
-        description: "Tap the 'Profile' tab at the bottom right of your screen",
+        description: "Tap the 'Profile' icon at the bottom right of your screen",
         details: [
-          "Look for the person icon at the bottom of the app",
+          "Look for the person icon in the bottom navigation bar",
           "This will take you to your personal profile page",
-          "You should see your profile picture and follower count"
+          "You should see your profile picture, bio, and follower count"
         ],
         icon: "👤",
         time: "10 seconds"
       },
       {
         step: 3,
-        title: "Open Settings Menu",
+        title: "Open the Menu",
         description: "Tap the three horizontal lines (☰) in the top right corner",
         details: [
-          "Also called the 'hamburger menu'",
-          "This opens the main settings and options",
-          "If you can't find it, look for three dots (...) instead"
+          "This is called the 'hamburger menu'",
+          "It's located in the top-right corner of your profile page",
+          "If you can't see it, make sure you're on your own profile page"
         ],
-        icon: "⚙️",
+        icon: "☰",
         time: "10 seconds"
       },
       {
         step: 4,
-        title: "Find Settings and Privacy",
+        title: "Open Settings and Privacy",
         description: "Scroll down and tap 'Settings and privacy'",
         details: [
-          "It's usually near the bottom of the menu",
-          "The exact wording might vary slightly",
-          "Look for anything mentioning 'Settings' or 'Privacy'"
+          "It's usually located towards the bottom of the menu",
+          "This option controls all your TikTok settings",
+          "Don't worry - we're just accessing your data download options"
         ],
         icon: "🔒",
-        time: "20 seconds"
+        time: "15 seconds"
       },
       {
         step: 5,
-        title: "Access Privacy Settings",
-        description: "Tap on 'Privacy' in the settings menu",
+        title: "Go to Account Settings",
+        description: "Tap on 'Account' in the settings menu",
         details: [
-          "This section controls who can see your data",
-          "Don't worry - downloading your data doesn't change any privacy settings",
-          "Your data remains private to you"
+          "This section contains your account management options",
+          "Look for it near the top of the Settings and privacy page",
+          "This is where TikTok keeps data download options"
         ],
-        icon: "🛡️",
+        icon: "👤",
         time: "10 seconds"
       },
       {
         step: 6,
-        title: "Request Your Data",
-        description: "Look for 'Download your data' or 'Request data download'",
+        title: "Find Download Your Data",
+        description: "Scroll down and tap 'Download your data'",
         details: [
-          "This might be under a section called 'Personalization and data'",
-          "TikTok is legally required to provide this (GDPR/CCPA)",
-          "It's completely free and safe to request"
+          "This option may be located under account management features",
+          "TikTok is legally required to provide this option",
+          "It's completely free and safe to use"
         ],
         icon: "📥",
-        time: "30 seconds"
+        time: "20 seconds"
       },
       {
         step: 7,
-        title: "Choose Data Format",
-        description: "Select 'JSON' format when prompted (NOT TXT)",
+        title: "Request Data Tab",
+        description: "You'll see the 'Request data' tab is already selected",
         details: [
-          "JSON is a computer-readable format our app can understand",
-          "TXT format won't work with our analysis tool",
-          "JSON contains much more detailed information"
+          "All data categories are chosen by default - that's perfect!",
+          "You don't need to change what data to include",
+          "We just need to change the file format in the next step"
         ],
-        icon: "📄",
-        time: "10 seconds"
+        icon: "📋",
+        time: "5 seconds"
       },
       {
         step: 8,
-        title: "Submit Your Request",
-        description: "Tap 'Request data download' to submit your request",
+        title: "Choose JSON Format",
+        description: "Change the file format from TXT to JSON",
         details: [
-          "TikTok will process your request",
-          "You'll get a confirmation message",
-          "The processing usually takes a few days"
+          "Look for 'Select file format' option",
+          "Make sure to select 'JSON' NOT 'TXT'",
+          "JSON format is required for our analysis tool to work",
+          "TXT files won't work with our app"
+        ],
+        icon: "📄",
+        time: "15 seconds"
+      },
+      {
+        step: 9,
+        title: "Submit Your Request",
+        description: "Tap 'Request data' to submit your download request",
+        details: [
+          "TikTok will start processing your data",
+          "You'll see a confirmation that your request was submitted",
+          "Processing typically takes a few hours to several days"
         ],
         icon: "✅",
         time: "10 seconds"
       },
       {
-        step: 9,
-        title: "Wait for Email",
-        description: "Check your email in 2-7 days for a download link",
+        step: 10,
+        title: "Wait for Processing",
+        description: "TikTok will process your request (this may take some time)",
         details: [
-          "TikTok will email you when your data is ready",
-          "Check your spam/junk folder if you don't see it",
-          "The email will come from TikTok official address",
-          "Don't worry if it takes up to a week - this is normal"
+          "You'll get a notification when your data is ready",
+          "Processing time varies but usually takes 1-7 days",
+          "You can check the status by returning to the same page",
+          "Don't submit multiple requests - just be patient"
         ],
-        icon: "📧",
-        time: "2-7 days"
+        icon: "⏱️",
+        time: "1-7 days"
       },
       {
-        step: 10,
+        step: 11,
         title: "Download Your Data",
-        description: "Click the download link in the email to get your file",
+        description: "Return to 'Download your data' and switch to the 'Download data' tab",
         details: [
-          "The file will be called something like 'user_data.json'",
-          "It might be in a ZIP file that you need to extract",
-          "Save it somewhere you can easily find it (like Downloads folder)",
-          "The file contains all your TikTok activity data"
+          "Go back to: Profile → Menu → Settings and privacy → Account → Download your data",
+          "Click on the 'Download data' tab (not 'Request data')",
+          "You should see your completed data package",
+          "Tap 'Download' to get your JSON file"
         ],
         icon: "💾",
         time: "2 minutes"
+      },
+      {
+        step: 12,
+        title: "Save and Use Your File",
+        description: "Your TikTok data file is now ready to upload to our analyzer!",
+        details: [
+          "The file will be named something like 'user_data_tiktok.json'",
+          "Save it somewhere easy to find (like your Downloads folder)",
+          "Come back to our app and upload this file",
+          "The file contains all your TikTok activity and engagement data"
+        ],
+        icon: "🎉",
+        time: "1 minute"
       }
     ],
     technical: [
       {
         step: 1,
-        title: "Navigate to TikTok Privacy Settings",
-        description: "Access via: Profile → Settings → Privacy → Download your data",
+        title: "Navigate to TikTok Account Settings",
+        description: "Access via: Profile → Menu → Settings and privacy → Account → Download your data",
         details: [
-          "Direct path: TikTok App → Profile Tab → ☰ Menu → Settings and privacy → Privacy",
+          "Correct path: TikTok App → Profile Tab → ☰ Menu → Settings and privacy → Account",
           "Alternative: TikTok Web → Settings → Privacy and Safety → Download your data",
-          "API endpoints are not publicly available for data export"
+          "Note: Mobile app path goes through Account, not Privacy section"
         ],
         icon: "🔧",
         time: "1 minute"
@@ -144,11 +170,11 @@ const DataGuide = ({ onClose }) => {
       {
         step: 2,
         title: "Configure Data Export Parameters",
-        description: "Select JSON format and specify data range if available",
+        description: "In 'Request data' tab: Select JSON format, keep all data categories selected",
         details: [
           "Format: JSON (required for our parser)",
-          "Date range: All available data recommended",
-          "Data types: All categories selected by default",
+          "Data types: All categories selected by default (recommended)",
+          "Date range: All available data (no date filtering needed)",
           "File structure will be nested JSON with activity categories"
         ],
         icon: "⚙️",
@@ -157,54 +183,41 @@ const DataGuide = ({ onClose }) => {
       {
         step: 3,
         title: "Submit GDPR/CCPA Data Request",
-        description: "Initiate formal data portability request",
+        description: "Initiate formal data portability request via 'Request data' button",
         details: [
           "Request type: Data portability under GDPR Article 20",
-          "Processing time: 48 hours to 30 days (typically 3-7 days)",
+          "Processing time: 1-7 days (varies by data volume and server load)",
           "Legal basis: User data subject rights",
-          "No rate limiting on legitimate requests"
+          "Status tracking: Available in same interface"
         ],
         icon: "📋",
         time: "Instant"
       },
       {
         step: 4,
-        title: "Await Processing & Email Delivery",
-        description: "Monitor for automated email with secure download link",
+        title: "Monitor Processing Status",
+        description: "Check 'Download data' tab for completion status",
         details: [
-          "Email source: noreply@tiktok.com or similar official domain",
-          "Link format: Temporary authenticated download URL",
-          "Expiration: Links typically expire in 7-14 days",
-          "Security: Links are user-specific and time-limited"
+          "Status updates: Available in-app (no email notifications by default)",
+          "Processing indicators: Pending → Processing → Ready for download",
+          "Access method: Return to Account → Download your data → Download data tab",
+          "Refresh frequency: Check daily until ready"
         ],
         icon: "⏱️",
-        time: "2-7 days"
+        time: "1-7 days"
       },
       {
         step: 5,
-        title: "Download & Extract Data Archive",
-        description: "Retrieve compressed data package and extract contents",
+        title: "Download & Validate Data Package",
+        description: "Retrieve data from 'Download data' tab and verify integrity",
         details: [
-          "File format: ZIP archive containing JSON files",
-          "Main file: user_data.json (~5-50MB depending on activity)",
-          "Structure: Nested objects with categories like Activity, Profile, etc.",
-          "Encoding: UTF-8 with escaped Unicode characters"
+          "File format: JSON (user_data_tiktok.json, ~1-50MB depending on activity)",
+          "Download method: Direct download from Download data tab",
+          "Structure: Nested objects with Activity, Profile, Video interactions",
+          "Validation: Ensure file is valid JSON and >1KB in size"
         ],
         icon: "📦",
         time: "2 minutes"
-      },
-      {
-        step: 6,
-        title: "Validate Data Integrity",
-        description: "Verify JSON structure and required fields",
-        details: [
-          "JSON validation: Use `jq` or online JSON validator",
-          "Required fields: Activity.VideoList, Activity.LoginHistory",
-          "File size: Should be >1KB (empty files indicate issues)",
-          "Encoding check: Ensure proper UTF-8 without BOM"
-        ],
-        icon: "✅",
-        time: "1 minute"
       }
     ]
   };
@@ -214,36 +227,36 @@ const DataGuide = ({ onClose }) => {
       problem: "Can't find 'Download your data' option",
       solutions: [
         "Update your TikTok app to the latest version",
-        "Try accessing via TikTok website instead of mobile app",
+        "Make sure you're looking in Account settings, not Privacy settings",
         "Check if the feature is available in your region",
-        "Look under 'Privacy and Safety' or 'Account' sections"
+        "Try restarting the app and following the path again"
       ]
     },
     {
-      problem: "Email never arrived",
+      problem: "Data request is taking too long",
       solutions: [
-        "Check spam/junk folder thoroughly",
         "Wait up to 7 days - processing can be slow",
-        "Try requesting again if it's been over a week",
-        "Ensure your email address is correct in TikTok settings"
+        "Check the 'Download data' tab regularly for status updates",
+        "Don't submit multiple requests - this can delay processing",
+        "If it's been over a week, try requesting again"
       ]
     },
     {
-      problem: "Downloaded file is empty or corrupted",
+      problem: "Can't find the Download data tab",
       solutions: [
-        "Re-download the file from the email link",
-        "Try downloading on a different device or browser",
-        "Check if you need to extract a ZIP file first",
-        "Request your data again if file is still corrupted"
+        "Make sure you're in Account → Download your data",
+        "Look for tabs at the top: 'Request data' and 'Download data'",
+        "The Download data tab only appears after you've made a request",
+        "Try refreshing by going back and entering the section again"
       ]
     },
     {
       problem: "File is not in JSON format",
       solutions: [
         "Make sure you selected JSON (not TXT) when requesting",
-        "If you have a TXT file, you'll need to request again",
-        "Look for a file ending in .json inside any ZIP archives",
-        "Contact TikTok support if only TXT option is available"
+        "If you have a TXT file, you'll need to request again with JSON format",
+        "Check that the file extension is .json",
+        "The file should start with { and end with } when opened in a text editor"
       ]
     }
   ];
