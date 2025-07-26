@@ -8,7 +8,7 @@ const router = express.Router();
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit
+    fileSize: 50 * 1024 * 1024, // 50MB limit (increased from 10MB for large TikTok exports)
   },
   fileFilter: (req, file, cb) => {
     // Accept JSON files or files with .json extension
@@ -837,6 +837,13 @@ router.post("/", upload.single("tiktokData"), async (req, res) => {
     // Log file info for debugging
     console.log(`Processing file: ${req.file.originalname} (${req.file.size} bytes)`);
 
+    // Check file size explicitly (additional safety check)
+    if (req.file.size > 50 * 1024 * 1024) {
+      return res.status(413).json({
+        error: "File too large. Maximum file size is 50MB."
+      });
+    }
+
     // Parse the uploaded JSON file
     let jsonData;
     try {
@@ -939,10 +946,55 @@ router.post("/", upload.single("tiktokData"), async (req, res) => {
 
   } catch (error) {
     console.error("Analysis error:", error);
+    
+    // Ensure we always return JSON, never HTML
+    if (error.code === 'LIMIT_FILE_SIZE') {
+      return res.status(413).json({
+        error: "File too large. Maximum file size is 50MB. Please try with a smaller file."
+      });
+    }
+    
+    if (error.message && error.message.includes('JSON')) {
+      return res.status(400).json({
+        error: `JSON parsing error: ${error.message}`
+      });
+    }
+    
+    // Generic error fallback
     res.status(500).json({ 
-      error: "Analysis failed. Please try again." 
+      error: "Analysis failed. Please try again or contact support if the issue persists.",
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
+});
+
+// Error handling middleware for multer errors
+router.use((error, req, res, next) => {
+  console.error('Multer error:', error);
+  
+  if (error.code === 'LIMIT_FILE_SIZE') {
+    return res.status(413).json({
+      error: "File too large. Maximum file size is 50MB."
+    });
+  }
+  
+  if (error.message === 'Only JSON files are allowed') {
+    return res.status(400).json({
+      error: "Invalid file type. Please upload a JSON file."
+    });
+  }
+  
+  if (error.message === 'Invalid filename') {
+    return res.status(400).json({
+      error: "Invalid filename. Please check your file and try again."
+    });
+  }
+  
+  // Generic error fallback - always return JSON
+  res.status(500).json({
+    error: "Upload failed. Please try again.",
+    details: process.env.NODE_ENV === 'development' ? error.message : undefined
+  });
 });
 
 export default router; 
