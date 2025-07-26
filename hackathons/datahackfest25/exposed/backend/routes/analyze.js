@@ -41,7 +41,7 @@ function parseTikTokData(jsonData) {
     
     // Analyze login patterns
     const loginHistory = activity["Login History"]?.LoginHistoryList || [];
-    const loginDates = loginHistory.map(login => new Date(login.Date));
+    const loginDates = loginHistory.map(login => new Date(login.Date)).filter(date => !isNaN(date.getTime()));
     const loginHours = loginDates.map(date => date.getHours());
     const mostActiveHour = loginHours.reduce((acc, hour) => {
       acc[hour] = (acc[hour] || 0) + 1;
@@ -50,7 +50,7 @@ function parseTikTokData(jsonData) {
     const peakHour = Object.entries(mostActiveHour).sort((a, b) => b[1] - a[1])[0];
     
     // Analyze binge sessions and streaks
-    const videoDates = videoList.map(video => new Date(video.Date));
+    const videoDates = videoList.map(video => new Date(video.Date)).filter(date => !isNaN(date.getTime()));
     const videosPerDay = videoDates.reduce((acc, date) => {
       const dayKey = date.toISOString().split('T')[0];
       acc[dayKey] = (acc[dayKey] || 0) + 1;
@@ -165,9 +165,9 @@ function parseTikTokData(jsonData) {
     const yearlyAnalysis = {};
     const allActivityDates = [
       ...videoDates,
-      ...searchHistory.map(search => new Date(search.Date)),
+      ...searchHistory.map(search => new Date(search.Date)).filter(date => !isNaN(date.getTime())),
       ...commentDates || [],
-      ...loginHistory.map(login => new Date(login.Date))
+      ...loginHistory.map(login => new Date(login.Date)).filter(date => !isNaN(date.getTime()))
     ].filter(date => !isNaN(date.getTime()));
     
     allActivityDates.forEach(date => {
@@ -194,9 +194,12 @@ function parseTikTokData(jsonData) {
     
     // Count searches by year
     searchHistory.forEach(search => {
-      const year = new Date(search.Date).getFullYear();
-      if (yearlyAnalysis[year]) {
-        yearlyAnalysis[year].searches++;
+      const date = new Date(search.Date);
+      if (!isNaN(date.getTime())) {
+        const year = date.getFullYear();
+        if (yearlyAnalysis[year]) {
+          yearlyAnalysis[year].searches++;
+        }
       }
     });
     
@@ -212,9 +215,12 @@ function parseTikTokData(jsonData) {
     
     // Count logins by year
     loginHistory.forEach(login => {
-      const year = new Date(login.Date).getFullYear();
-      if (yearlyAnalysis[year]) {
-        yearlyAnalysis[year].logins++;
+      const date = new Date(login.Date);
+      if (!isNaN(date.getTime())) {
+        const year = date.getFullYear();
+        if (yearlyAnalysis[year]) {
+          yearlyAnalysis[year].logins++;
+        }
       }
     });
     
