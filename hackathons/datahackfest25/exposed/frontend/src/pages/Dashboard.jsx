@@ -121,9 +121,14 @@ function Dashboard() {
       // Use environment-based API URL
       const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+      console.log('Uploading file:', file.name, file.type, file.size);
+      console.log('API URL:', API_BASE_URL);
+      
       const response = await fetch(`${API_BASE_URL}/analyze`, {
         method: "POST",
         body: formData,
+        // Important: Don't set Content-Type header when using FormData
+        // Browser will set it automatically with proper boundary
       });
 
       const result = await response.json();
