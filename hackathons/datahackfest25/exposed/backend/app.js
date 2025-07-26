@@ -14,6 +14,7 @@ const PORT = process.env.PORT || 4000;
 app.use(cors({
   origin: [
     'http://localhost:5173',
+    'https://exposed-ten.vercel.app',
     'https://exposed-eyj8j05pv-hector-gonzalezs-projects-69248f08.vercel.app',
     'https://exposed-me4lf3z5y-hector-gonzalezs-projects-69248f08.vercel.app',
     'https://exposed-25k8mjn88-hector-gonzalezs-projects-69248f08.vercel.app',
