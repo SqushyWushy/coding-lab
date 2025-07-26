@@ -22,13 +22,30 @@ const upload = multer({
   },
 });
 
+// Safe date parsing function to handle different TikTok export formats
+function safeParseDate(dateString) {
+  if (!dateString || typeof dateString !== 'string') {
+    return null;
+  }
+  
+  try {
+    // Handle various date formats from different TikTok exports
+    const date = new Date(dateString.trim());
+    return isNaN(date.getTime()) ? null : date;
+  } catch (error) {
+    return null;
+  }
+}
+
 // Parse TikTok data and extract comprehensive insights
 function parseTikTokData(jsonData) {
   try {
-    const activity = jsonData.Activity || {};
+    // Handle both "Activity" and "Your Activity" keys (different TikTok export formats)
+    const activity = jsonData.Activity || jsonData["Your Activity"] || {};
     
     // Calculate time spent estimates
-    const videoList = activity["Video Browsing History"]?.VideoList || [];
+    // Handle both "Video Browsing History" and "Watch History" keys (different TikTok export formats)
+    const videoList = (activity["Video Browsing History"]?.VideoList || activity["Watch History"]?.VideoList) || [];
     const avgWatchTime = 30; // seconds per TikTok
     const totalWatchTimeSeconds = videoList.length * avgWatchTime;
     const totalWatchTimeHours = totalWatchTimeSeconds / 3600;
@@ -41,7 +58,7 @@ function parseTikTokData(jsonData) {
     
     // Analyze login patterns
     const loginHistory = activity["Login History"]?.LoginHistoryList || [];
-    const loginDates = loginHistory.map(login => new Date(login.Date)).filter(date => !isNaN(date.getTime()));
+    const loginDates = loginHistory.map(login => safeParseDate(login.Date)).filter(date => date !== null);
     const loginHours = loginDates.map(date => date.getHours());
     const mostActiveHour = loginHours.reduce((acc, hour) => {
       acc[hour] = (acc[hour] || 0) + 1;
@@ -50,7 +67,7 @@ function parseTikTokData(jsonData) {
     const peakHour = Object.entries(mostActiveHour).sort((a, b) => b[1] - a[1])[0];
     
     // Analyze binge sessions and streaks
-    const videoDates = videoList.map(video => new Date(video.Date)).filter(date => !isNaN(date.getTime()));
+    const videoDates = videoList.map(video => safeParseDate(video.Date)).filter(date => date !== null);
     const videosPerDay = videoDates.reduce((acc, date) => {
       const dayKey = date.toISOString().split('T')[0];
       acc[dayKey] = (acc[dayKey] || 0) + 1;
@@ -89,7 +106,8 @@ function parseTikTokData(jsonData) {
     longestStreakEnd.setDate(longestStreakEnd.getDate() + longestStreak - 1);
     
     // Analyze search patterns
-    const searchHistory = activity["Search History"]?.SearchList || [];
+    // Handle both "Search History" and "Searches" keys (different TikTok export formats)
+    const searchHistory = (activity["Search History"]?.SearchList || activity["Searches"]?.SearchList) || [];
     const searchTerms = searchHistory.map(search => search.SearchTerm.toLowerCase());
     const searchFrequency = searchTerms.reduce((acc, term) => {
       acc[term] = (acc[term] || 0) + 1;
@@ -106,7 +124,7 @@ function parseTikTokData(jsonData) {
     
     // Extract comment text and dates for personality analysis
     const commentTexts = commentList.map(comment => comment.comment || '').filter(text => text.length > 0);
-    const commentDates = commentList.map(comment => new Date(comment.date)).filter(date => !isNaN(date.getTime()));
+    const commentDates = commentList.map(comment => safeParseDate(comment.date)).filter(date => date !== null);
     
     // Extract longest comments with metadata
     const commentsWithMetadata = commentList.map(comment => ({
@@ -165,10 +183,10 @@ function parseTikTokData(jsonData) {
     const yearlyAnalysis = {};
     const allActivityDates = [
       ...videoDates,
-      ...searchHistory.map(search => new Date(search.Date)).filter(date => !isNaN(date.getTime())),
+      ...searchHistory.map(search => safeParseDate(search.Date)).filter(date => date !== null),
       ...commentDates || [],
-      ...loginHistory.map(login => new Date(login.Date)).filter(date => !isNaN(date.getTime()))
-    ].filter(date => !isNaN(date.getTime()));
+      ...loginHistory.map(login => safeParseDate(login.Date)).filter(date => date !== null)
+          ].filter(date => date !== null);
     
     allActivityDates.forEach(date => {
       const year = date.getFullYear();
@@ -194,8 +212,8 @@ function parseTikTokData(jsonData) {
     
     // Count searches by year
     searchHistory.forEach(search => {
-      const date = new Date(search.Date);
-      if (!isNaN(date.getTime())) {
+      const date = safeParseDate(search.Date);
+      if (date) {
         const year = date.getFullYear();
         if (yearlyAnalysis[year]) {
           yearlyAnalysis[year].searches++;
@@ -215,8 +233,8 @@ function parseTikTokData(jsonData) {
     
     // Count logins by year
     loginHistory.forEach(login => {
-      const date = new Date(login.Date);
-      if (!isNaN(date.getTime())) {
+      const date = safeParseDate(login.Date);
+      if (date) {
         const year = date.getFullYear();
         if (yearlyAnalysis[year]) {
           yearlyAnalysis[year].logins++;
@@ -262,8 +280,11 @@ function parseTikTokData(jsonData) {
     // Login hours for activity clock
     const loginHourlyPattern = Array(24).fill(0);
     loginHistory.forEach(login => {
-      const hour = new Date(login.Date).getHours();
-      loginHourlyPattern[hour]++;
+      const date = safeParseDate(login.Date);
+      if (date) {
+        const hour = date.getHours();
+        loginHourlyPattern[hour]++;
+      }
     });
 
     // Weekly patterns
@@ -275,7 +296,8 @@ function parseTikTokData(jsonData) {
 
 
     searchHistory.forEach(search => {
-      const date = new Date(search.Date);
+      const date = safeParseDate(search.Date);
+      if (!date) return;
       const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
       if (activityOverTime[monthKey]) {
         activityOverTime[monthKey].searches++;
@@ -292,7 +314,8 @@ function parseTikTokData(jsonData) {
     }
 
     loginHistory.forEach(login => {
-      const date = new Date(login.Date);
+      const date = safeParseDate(login.Date);
+      if (!date) return;
       const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
       if (activityOverTime[monthKey]) {
         activityOverTime[monthKey].logins++;
@@ -311,8 +334,9 @@ function parseTikTokData(jsonData) {
       .slice(0, 5);
     
     // Analyze social behavior
-    const followers = activity["Follower List"]?.FansList || [];
-    const following = activity["Following List"]?.Following || [];
+    // Handle both "Follower List" and "Follower" keys (different TikTok export formats)
+    const followers = (activity["Follower List"]?.FansList || activity["Follower"]?.FansList) || [];
+    const following = (activity["Following List"]?.Following || activity["Following"]?.Following) || [];
     const likes = activity["Like List"]?.ItemFavoriteList || [];
     const shares = activity["Share History"]?.ShareHistoryList || [];
     
@@ -347,7 +371,8 @@ function parseTikTokData(jsonData) {
 
     // Likes trend (if available)
     likes.forEach(like => {
-      const date = new Date(like.Date);
+      const date = safeParseDate(like.Date);
+      if (!date) return;
       const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
       if (engagementTrends[monthKey]) {
         engagementTrends[monthKey].likes++;
@@ -356,7 +381,8 @@ function parseTikTokData(jsonData) {
 
     // Search trend
     searchHistory.forEach(search => {
-      const date = new Date(search.Date);
+      const date = safeParseDate(search.Date);
+      if (!date) return;
       const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
       if (engagementTrends[monthKey]) {
         engagementTrends[monthKey].searches++;
@@ -471,16 +497,16 @@ function parseTikTokData(jsonData) {
     
     // Collect dates from all sources
     if (insights.favoriteVideos.items.length > 0) {
-      allDates.push(...insights.favoriteVideos.items.map(item => new Date(item.Date)));
+      allDates.push(...insights.favoriteVideos.items.map(item => safeParseDate(item.Date)).filter(date => date));
     }
     if (insights.favoriteSounds.items.length > 0) {
-      allDates.push(...insights.favoriteSounds.items.map(item => new Date(item.Date)));
+      allDates.push(...insights.favoriteSounds.items.map(item => safeParseDate(item.Date)).filter(date => date));
     }
     if (insights.searchHistory.items.length > 0) {
-      allDates.push(...insights.searchHistory.items.map(item => new Date(item.Date)));
+      allDates.push(...insights.searchHistory.items.map(item => safeParseDate(item.Date)).filter(date => date));
     }
     if (loginHistory.length > 0) {
-      allDates.push(...loginHistory.map(login => new Date(login.Date)));
+      allDates.push(...loginHistory.map(login => safeParseDate(login.Date)).filter(date => date));
     }
     
     // Calculate overall time range
@@ -496,8 +522,8 @@ function parseTikTokData(jsonData) {
     // Calculate individual time ranges
     if (insights.favoriteVideos.items.length > 0) {
       const dates = insights.favoriteVideos.items
-        .map(item => new Date(item.Date))
-        .filter(date => !isNaN(date.getTime()))
+        .map(item => safeParseDate(item.Date))
+        .filter(date => date !== null)
         .sort((a, b) => a - b);
       
       if (dates.length > 0) {
@@ -511,8 +537,8 @@ function parseTikTokData(jsonData) {
     
     if (insights.favoriteSounds.items.length > 0) {
       const dates = insights.favoriteSounds.items
-        .map(item => new Date(item.Date))
-        .filter(date => !isNaN(date.getTime()))
+        .map(item => safeParseDate(item.Date))
+        .filter(date => date !== null)
         .sort((a, b) => a - b);
       
       if (dates.length > 0) {
@@ -634,7 +660,7 @@ router.post("/", upload.single("tiktokData"), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ 
-        error: "No file uploaded. Please upload a TikTok user_data.json file." 
+        error: "No file uploaded. Please upload a TikTok data export JSON file." 
       });
     }
 
@@ -644,7 +670,7 @@ router.post("/", upload.single("tiktokData"), async (req, res) => {
       jsonData = JSON.parse(req.file.buffer.toString());
     } catch (parseError) {
       return res.status(400).json({ 
-        error: "Invalid JSON file. Please upload a valid TikTok user_data.json file." 
+        error: "Invalid JSON file. Please upload a valid TikTok data export JSON file." 
       });
     }
 
