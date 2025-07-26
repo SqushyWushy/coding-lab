@@ -15,6 +15,7 @@ app.use(cors({
   origin: [
     'http://localhost:5173',
     'https://exposed-eyj8j05pv-hector-gonzalezs-projects-69248f08.vercel.app',
+    'https://exposed-me4lf3z5y-hector-gonzalezs-projects-69248f08.vercel.app',
     'https://*.vercel.app',
     'https://coding-lab-production-3953.up.railway.app',
     'https://*.railway.app'
